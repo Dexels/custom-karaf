@@ -9,5 +9,5 @@ ps -fe | grep java | grep -v grep | awk '{print $2}' | xargs -n 1 kill -9
 #export PATH=$JAVA_HOME/bin:$PATH
 #cd $OPENSHIFT_REPO_DIR/karaf
 #bin/stop
-#exit 0
+exit 0
 
