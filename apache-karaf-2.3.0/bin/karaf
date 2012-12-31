@@ -15,6 +15,28 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 #
+#debug settings to run out of OpenShift:
+if [ "x$OPENSHIFT_DATA_DIR" = "x" ]; then
+    OPENSHIFT_DATA_DIR=/Users/frank/git/karaf-openshift/data
+    export OPENSHIFT_DATA_DIR
+fi
+if [ "x$OPENSHIFT_REPO_DIR" = "x" ]; then
+    OPENSHIFT_REPO_DIR=/Users/frank/git/karaf-openshift
+    export OPENSHIFT_REPO_DIR
+fi
+if [ "x$OPENSHIFT_INTERNAL_IP" = "x" ]; then
+    OPENSHIFT_INTERNAL_IP=0.0.0.0
+    export OPENSHIFT_INTERNAL_IP
+fi
+
+echo "Starting Openshift Karaf"
+echo $OPENSHIFT_DATA_DIR
+export KARAF_HOME=${OPENSHIFT_REPO_DIR}/karaf
+export KARAF_BASE=${OPENSHIFT_REPO_DIR}/karaf
+export KARAF_DATA=$OPENSHIFT_DATA_DIR
+#./karaf server
+echo "End of Openshift Karaf"
+
 
 DIRNAME=`dirname "$0"`
 PROGNAME=`basename "$0"`
@@ -376,7 +398,7 @@ run() {
         JAVA_EXT_DIRS=`cygpath --path --windows "$JAVA_EXT_DIRS"`
     fi
     cd "$KARAF_BASE"
-    exec "$JAVA" $JAVA_OPTS -Djava.endorsed.dirs="${JAVA_ENDORSED_DIRS}" -Djava.ext.dirs="${JAVA_EXT_DIRS}" -Dkaraf.instances="${KARAF_HOME}/instances" -Dkaraf.home="$KARAF_HOME" -Dkaraf.base="$KARAF_BASE" -Dkaraf.data="$KARAF_DATA" -Djava.io.tmpdir="$KARAF_DATA/tmp" -Djava.util.logging.config.file="$KARAF_BASE/etc/java.util.logging.properties" $KARAF_OPTS $OPTS -classpath "$CLASSPATH" $MAIN "$@"
+    exec "$JAVA" $JAVA_OPTS -Djava.endorsed.dirs="${JAVA_ENDORSED_DIRS}" -Djava.ext.dirs="${JAVA_EXT_DIRS}" -Dkaraf.instances="${KARAF_HOME}/instances" -Dkaraf.home="$KARAF_HOME" -Dkaraf.base="$KARAF_BASE" -Dkaraf.data="$KARAF_DATA" -Djava.io.tmpdir="$KARAF_DATA/tmp" -Djava.util.logging.config.file="$KARAF_BASE/etc/java.util.logging.properties" -Dorg.ops4j.pax.web.listening.addresses="$OPENSHIFT_INTERNAL_IP" -Dorg.apache.karaf.shell.sshHost="$OPENSHIFT_INTERNAL_IP" -Dorg.apache.karaf.shell.sshPort="18101" $KARAF_OPTS $OPTS -Dkaraf.shutdown.host="$OPENSHIFT_INTERNAL_IP" -classpath "$CLASSPATH" $MAIN "$@"
 }
 
 main() {
