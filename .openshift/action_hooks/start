@@ -6,6 +6,6 @@
 set -x
 export JAVA_HOME=/usr/lib/jvm/jre
 export PATH=$JAVA_HOME/bin:$PATH
-cd $OPENSHIFT_REPO_DIR/karaf
+cd $OPENSHIFT_REPO_DIR/apache-karaf-2.3.0
 bin/start
 #exit 0
