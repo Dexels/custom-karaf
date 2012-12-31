@@ -1,0 +1,11 @@
+#!/bin/bash
+# The logic to start up your application should be put in this
+# script. The application will work only if it binds to
+# $OPENSHIFT_INTERNAL_IP:8080
+#$OPENSHIFT_INTERNAL_IP $OPENSHIFT_REPO_DIR/diy > $OPENSHIFT_HOMEDIR/diy-0.1/logs/server.log 2>&1 &
+set -x
+export JAVA_HOME=/usr/lib/jvm/jre
+export PATH=$JAVA_HOME/bin:$PATH
+cd $OPENSHIFT_REPO_DIR/karaf
+bin/start
+#exit 0

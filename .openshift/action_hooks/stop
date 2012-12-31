@@ -1,0 +1,13 @@
+#!/bin/bash
+# The logic to stop your application should be put in this script.
+# sort of crude:
+# kill all java processes
+ps -fe | grep java | grep -v grep | awk '{print $2}' | xargs -n 1 kill -9
+
+#set -x
+#export JAVA_HOME=/usr/lib/jvm/jre
+#export PATH=$JAVA_HOME/bin:$PATH
+#cd $OPENSHIFT_REPO_DIR/karaf
+#bin/stop
+#exit 0
+
