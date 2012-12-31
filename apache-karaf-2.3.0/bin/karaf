@@ -31,8 +31,8 @@ fi
 
 echo "Starting Openshift Karaf"
 echo $OPENSHIFT_DATA_DIR
-export KARAF_HOME=${OPENSHIFT_REPO_DIR}/karaf
-export KARAF_BASE=${OPENSHIFT_REPO_DIR}/karaf
+export KARAF_HOME=${OPENSHIFT_REPO_DIR}/apache-karaf-2.3.0/
+export KARAF_BASE=${OPENSHIFT_REPO_DIR}/apache-karaf-2.3.0/
 export KARAF_DATA=$OPENSHIFT_DATA_DIR
 #./karaf server
 echo "End of Openshift Karaf"
