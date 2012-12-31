@@ -15,6 +15,7 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 #
+
 #debug settings to run out of OpenShift:
 if [ "x$OPENSHIFT_DATA_DIR" = "x" ]; then
     OPENSHIFT_DATA_DIR=/Users/frank/git/karaf-openshift/data
