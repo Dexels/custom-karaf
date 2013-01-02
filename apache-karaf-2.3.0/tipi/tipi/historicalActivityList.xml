@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<tid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" errorhandler="error" xsi:noNamespaceSchemaLocation="tipi.xsd">
+    <d.window closable="true" h="525" name="historicalActivityList" resizable="true" title="'Historische activiteiten'" movable="true" w="980" x="20" y="60">
+        <onInstantiate>
+            <callService service="'officialportal/InitGetReimbursementInfo'"/>
+            <callService service="'officialportal/InitQueryMatch'"/>
+            <callService service="'officialportal/InitGetMatchOfficials'"/>
+        </onInstantiate>
+        <l.border>
+            <c.tipitable id="table" messagepath="'Activities'" service="officialportal/ProcessQueryActivities">
+                <column name="ExternalMatchId" label="'Wedstr.'" editable="false" size="50"/>
+                <column name="ActivityName" label="'Activiteit'" editable="false" size="250"/>
+                <column name="CalendarDate" label="'Datum'" editable="false" size="80"/>
+                <column name="StartTime" label="'Starttijd'" editable="false" size="50"/>
+                <column name="FunctionDescription" label="'Uw rol'" editable="false" size="90"/>
+                <column name="SportDescription" label="'Type'" editable="false" size="50"/>
+                <column name="Status" label="'Status'" editable="false" size="80"/>
+                <column name="FormAvailable" label="'Formulieren'" editable="false" size="70"/>
+                <onReport>
+                    <openBinary binary="{event:/report}"  newWindow="true"/>
+                </onReport>
+            </c.tipitable>
+            <c.toolbar id="toolbar" constraint="South:50">
+                <c.button  id="accommodation" text="'Accommodatiegegevens'" tooltip="'bekijk accommodatiedetails'">
+                    <onActionPerformed>
+                        <block expression="{attribute:/~/table:selectedIndex} == -1">
+                            <showInfo text="'Selecteer a.u.b. een activiteit.'"/>
+                        </block>
+                        <block expression="{attribute:/~/table:selectedIndex} != -1">
+                            <block expression="GetPropertyValue({attribute:/~/table:selectedMessage},'FacilityId') == null">
+                                <showInfo text="'Van deze activiteit zijn geen accommodatiedetails beschikbaar.'"/>
+                            </block>
+                            <setValue from="{property:/~/table:selectedMessage:OfficialId}" to="{propertyref:/officialportal/InitGetReimbursementInfo:/AssignmentData/OfficialId}"/>
+                            <setValue from="{property:/~/table:selectedMessage:ActivityId}" to="{propertyref:/officialportal/InitGetReimbursementInfo:/AssignmentData/MatchId}"/>
+                            <callService input="{navajo:/officialportal/InitGetReimbursementInfo}" service="'officialportal/ProcessGetReimbursementInfo'"/>
+                            <instantiate force="true" id="'currentDetail'" name="'facilityDetailWindow'" location="{component://init/main}"/>
+                            <reloadNavajo service="{navajo:/officialportal/ProcessGetReimbursementInfo}"/>
+                        </block>
+                    </onActionPerformed>
+                </c.button>
+                <c.button id="match" text="'Wedstrijdgegevens'" tooltip="'bekijk wedstrijddetails'">
+                    <onActionPerformed>
+                        <block expression="{attribute:/~/table:selectedIndex} == -1">
+                            <showInfo text="'Selecteer a.u.b. een activiteit.'"/>
+                        </block>
+                        <block expression="{attribute:/~/table:selectedIndex} != -1">
+                            <block expression="GetPropertyValue({attribute:/~/table:selectedMessage},'ExternalMatchId') == null">
+                                <showInfo text="'Van deze activiteit zijn geen wedstrijddetails beschikbaar.'"/>
+                            </block>
+                            <block expression="GetPropertyValue({attribute:/~/table:selectedMessage},'ExternalMatchId') != null">
+                                <setValue from="{property:/~/table:selectedMessage:ActivityId}" to="{propertyref:/officialportal/InitQueryMatch:/Match/MatchId}"/>
+                                <setValue from="{global:/username}" to="{propertyref:/officialportal/InitQueryMatch:/Match/PersonId}"/>
+                                <setValue from="{property:/~/table:selectedMessage:ActivityId}" to="{propertyref:/officialportal/InitGetMatchOfficials:/MatchData/MatchId}"/>
+                                <setValue from="{global:/username}" to="{propertyref:/officialportal/InitGetMatchOfficials:/MatchData/PersonId}"/>
+                                <callService input="{navajo:/officialportal/InitQueryMatch}" service="'officialportal/ProcessQueryMatch'"/>
+                                <instantiate force="true" id="'currentDetail'" name="'matchDetailWindow'" location="{component://init/main}"/>
+                                <callService input="{navajo:/officialportal/InitGetMatchOfficials}" service="'officialportal/ProcessGetMatchOfficials'"/>
+                                <setValue from="{property:/~/table:selectedMessage:ActivityName}" to="{attributeref://init/main/currentDetail:title}"/>
+                                <reloadNavajo service="{navajo:/officialportal/ProcessQueryMatch}"/>
+                            </block>
+                        </block>
+                    </onActionPerformed>
+                </c.button>
+                <c.button id="print" text="'Afdrukken'">
+                    <onActionPerformed>
+                        <tipitable.printReport path="{component:/~/table}" />
+                    </onActionPerformed>
+                </c.button>
+                <c.button id="discipline" text="'Tucht'">
+                    <onActionPerformed>
+                        <instantiate force="true" id="'matchDisciplineAddWindow'" name="'matchDisciplineAddWindow'" location="{component://init/main}"/>
+                    </onActionPerformed>
+                </c.button>
+            </c.toolbar>
+        </l.border>
+    </d.window>
+</tid>

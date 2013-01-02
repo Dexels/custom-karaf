@@ -1,0 +1,74 @@
+
+.v-button-big {
+	font-size: 1.2em;
+	}
+	
+.v-disabled {
+	opacity: .7;
+	filter: alpha(opacity=70);
+	}
+	
+.v-invalidQuestion {
+	background-color: rgb(201,21,21);
+	border-color: rgb(250,129,129);
+	
+}
+
+
+.mail {
+	background-color: rgb(255,255,255);
+	opacity: .9;
+}
+
+
+
+.v-gridlayout-spacing,
+.v-gridlayout-spacing-off {
+	padding-left: 10;
+	padding-top: 10;
+}
+v-gridlayout-margin {
+	margin: 10px;
+	
+}
+.titled {
+	margin: 10px;
+	border-color: black;
+	border-style: solid;
+	border: 1px;
+
+}
+
+.tipi-property label {
+	color: black;
+}
+
+.v-textfield-tipi-property-direction-out {
+	color: black;
+}
+	
+.tipi.property .tipi-property-direction-out {
+	background-color: white;
+}
+/* Loading indicator states
+ * Note: client side expects that loading indicator has a height. It depends on
+ * this css property to ensure browsers have applied all required styles.
+ */
+.v-loading-indicator,
+.v-loading-indicator-delay,
+.v-loading-indicator-wait {
+	z-index: 30000;
+	width: 124px;
+	height: 124px;
+	background: transparent url(loading.gif);
+position: fixed;
+  top: 50%;
+  left: 50%;
+  margin-top: -62px;
+  margin-left: -62px;
+/*  position: absolute;
+	top: 0;
+	right: 0;
+ 	margin-right: 5px;
+	margin-top: 5px;*/
+}

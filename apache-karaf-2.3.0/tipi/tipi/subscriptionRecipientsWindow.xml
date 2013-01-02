@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<tid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" errorhandler="error" xsi:noNamespaceSchemaLocation="tipi.xsd">
+    <d.window closable="true" h="300" name="subscriptionRecipientsWindow" resizable="true" title="'Ontvangers'" movable="true" w="300" x="170" y="100">
+        <l.border>
+            <c.tipitable constraint="Center" rowsPerPage="0" id="table" messagepath="'ForwardAddresses'" service="relations/ProcessQuerySubscriptionForwardAddresses">
+                <column name="EmailAddress" label="'Adres'" editable="false" size="260" />
+            </c.tipitable> 
+            <c.toolbar id="toolbar" constraint="South">
+                <c.button id="addRecipient" text="'Toevoegen'" tooltip="'Toevoegen emailadres'">
+                    <onActionPerformed>
+                        <instantiate force="true" id="'addSubscriptionRecipientsDialog'" name="'addSubscriptionRecipientsDialog'" location="{component://init/main}" />
+                        <injectNavajo navajo="{navajo:/relations/ProcessQuerySubscriptionForwardAddresses}" service="'relations/InsertSubscriptionRecipient'"/>
+                    </onActionPerformed>
+                </c.button>
+                <c.button id="deleteRecipient" text="'Verwijderen'" tooltip="'Verwijderen emailadres'">
+                    <onActionPerformed>
+                        <block expression="{attribute:/~/table:selectedIndex} == -1">
+                            <showInfo text="'Selecteer a.u.b. een doorstuuradres.'" />
+                        </block>
+                        <block expression="{attribute:/~/table:selectedIndex} != -1">
+                            <setValue from="true" to="{propertyref:/~/table:selectedMessage:Delete}" />
+                            <callService input="{navajo:/relations/ProcessQuerySubscriptionForwardAddresses}" service="'relations/ProcessDeleteSubscriptionForwardAddresses'" />
+                            <callService input="{navajo:/relations/InitUpdateSubscription}" service="'relations/ProcessQuerySubscriptionForwardAddresses'" />
+                        </block>
+                    </onActionPerformed>
+                </c.button>
+             </c.toolbar>
+        </l.border>
+    </d.window>
+</tid>

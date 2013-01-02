@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<tid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" errorhandler="error" xsi:noNamespaceSchemaLocation="tipi.xsd">
+   <d.dialog closable="false" h="240" modal="true" name="mfLogin" resizable="true" title="'Inloggen officials ('+{system:/tipi.deploy}+' / '+{system:/tipi.profile}+') '" movable="true" w="564">
+      <onInstantiate>
+         <callService service="'officialportal/InitLogin'"/>
+      </onInstantiate>
+      <c.gridpanel columnWidth="'450'" id="panel">
+         <c.gridpanel columnWidth="'150 350'" id="loginPane" service="officialportal/InitLogin">
+            <onLoad>
+                <!-- Reset to original -->
+                <setUsername username="{system:/navajoUsr}"/>
+                <setPassword password="{system:/navajoPwd}"/>
+
+               <block expression="{cookie:/opuser}!=null">
+                  <setValue from="{cookie:/opuser}" to="{attributeref:/~/panel/loginPane/UserId:propertyValue}" />
+               </block>
+               <block expression="{cookie:/oppass}!=null">
+                  <setValue from="{cookie:/oppass}" to="{attributeref:/~/panel/loginPane/Pincode:propertyValue}" />
+               </block>
+            </onLoad>
+            <c.hidden constraint="rowspan:4;padding:10 10 10 10;align:left top" style="'loginpicture'" id="DSO" text="''" />
+            <c.property capitalization="'upper'" constraint="height:30;padding:0 0 0 0" id="UserId" label_indent="120" propertyname="'/UserData/UserName'" />
+            <c.property constraint="height:30;padding:0 0 0 0" id="Pincode" label_indent="120" propertyname="'/UserData/Password'">
+               <onEnter>
+                  <performTipiMethod name="'fireAction'" path="{component:/../toolbarPane/login}" />
+               </onEnter>
+            </c.property>
+            <c.checkbox text="'Onthouden?'" constraint="height:30;padding:5 0 0 0" id="saveUID">
+            </c.checkbox>
+            <c.toolbar id="toolbarPane" style="'Login'">
+               <c.button id="login" text="'Inloggen'" tooltip="'inloggen'" defaultButton="true">
+                  <onActionPerformed>
+                    <set element="{propertyref:/officialportal/InitLogin:UserData/UserName}" value="ToUpper({property:/officialportal/InitLogin:UserData/UserName})"/>
+                    <setUsername username="{system:/navajoUsr}"/>
+                    <setPassword password="{system:/navajoPwd}"/>
+                    <callService input="{navajo:/officialportal/InitLogin}" service="'officialportal/ProcessLogin'" />
+                  </onActionPerformed>
+               </c.button>
+               <c.button text="'Wachtwoord vergeten'" tooltip="'wachtwoord vergeten?'">
+                   <onActionPerformed>
+                      <block expression="{property:/officialportal/InitLogin:UserData/UserName} != ''">
+                          <callService input="{navajo:/officialportal/InitLogin}" service="'triplea/ProcessResetAndMailPassword'" />
+                          <block condition="{property:/triplea/ProcessResetAndMailPassword:/ChangedPassword/NewPassword} != null">
+                              <block condition="{property:/triplea/ProcessResetAndMailPassword:/ChangedPassword/EmailAddress} != null">
+                                  <showInfo text="'Uw nieuwe wachtwoord is verstuurd naar uw e-mailadres'" />
+                              </block>
+                              <block condition="{property:/triplea/ProcessResetAndMailPassword:/ChangedPassword/EmailAddress} == null">
+                                  <showInfo text="'Er is geen e-mailadres van u bekend. Het wachtwoord is niet aangepast. Neemt u s.v.p. contact op met uw bond'" />
+                              </block>
+                          </block>
+                          <block condition="{property:/triplea/ProcessResetAndMailPassword:/ChangedPassword/NewPassword} == null">
+                              <showInfo text="'Deze gebruikersnaam is niet bekend, denkt u om eventuele hoofdletters en probeer het nogmaals'" />
+                          </block>
+                      </block>
+                      <block expression="{property:/officialportal/InitLogin:UserData/UserName} == ''">
+                           <showInfo text="'Om uw nieuwe wachtwoord naar uw e-mailadres te versturen, moet u eerst uw relatiecode invoeren.'" />
+                      </block>
+                  </onActionPerformed>
+                </c.button>
+            </c.toolbar>
+            </c.gridpanel>
+                 <c.button id="manual" style="'link'" text="'Handleiding'" tooltip="'Handleiding OAO(Official Aanstellingen Overzicht)'" visible="{system:/union} == 'KNVB'">
+                <onActionPerformed>
+                      <openBinary newWindow="true" binary="'http://downloadcentrum.knvb.nl/sportlink/knvb/document/knvb%20handleiding%20official%20portaal%20(op).pdf?id=35799'" />
+                  </onActionPerformed>
+               </c.button>
+      </c.gridpanel>
+   </d.dialog>
+</tid>

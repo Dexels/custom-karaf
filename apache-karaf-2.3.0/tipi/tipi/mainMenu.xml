@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<tid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" errorhandler="error" xsi:noNamespaceSchemaLocation="tipi.xsd">
+    <d.tipi name="mainMenu" background="{resource:/icons/money2.png}">        
+        <l.border>
+            <c.column>
+                <c.button id="my_acts" icon="{resource:/icons/btn_mijn_activiteiten.png}" text="''" tooltip="'uw toekomstige bondsactiviteiten'">
+                    <onActionPerformed>
+                        <instantiate force="true" id="'current'" name="'officialActivityList'" location="{component://init/main}" />
+                        <callService service="'activities/InitQueryPersonActivities'" />
+                        <setValue from="false" to="{propertyref:/activities/InitQueryPersonActivities:/PersonActivities/IgnorePast}" />
+                        <setValue from="true" to="{propertyref:/activities/InitQueryPersonActivities:/PersonActivities/IgnoreConcept}" />
+                        <setValue from="{property:/officialportal/ProcessLogin:/UserData/UserName}" to="{propertyref:/activities/InitQueryPersonActivities:/PersonActivities/PersonId}" />
+                        <callService input="{navajo:/activities/InitQueryPersonActivities}" service="'officialportal/ProcessQueryToDoList'" />
+                    </onActionPerformed>
+                </c.button>
+                <!-- historische activiteiten -->
+                <c.button icon="{resource:/icons/btn_historie.png}" text="''" tooltip="'bondsactiviteiten in het verleden'">
+                    <onActionPerformed>
+                        <instantiate force="true" id="'current'" name="'historicalActivityList'" location="{component://init/main}" />
+                        <callService service="'activities/InitQueryPersonActivities'" cached="true"/>
+                        <setValue from="false" to="{propertyref:/activities/InitQueryPersonActivities:/PersonActivities/IgnorePast}" />
+                        <setValue from="true" to="{propertyref:/activities/InitQueryPersonActivities:/PersonActivities/PastOnly}" />
+                        <setValue from="true" to="{propertyref:/activities/InitQueryPersonActivities:/PersonActivities/ShowPreviousSeason}" />
+                        <setValue from="true" to="{propertyref:/activities/InitQueryPersonActivities:/PersonActivities/IgnoreConcept}" />
+                        <setValue from="false" to="{propertyref:/activities/InitQueryPersonActivities:/PersonActivities/ShowOfficialOfficialOnly}" />
+                        <setValue from="{property:/officialportal/ProcessLogin:/UserData/UserName}" to="{propertyref:/activities/InitQueryPersonActivities:/PersonActivities/PersonId}" />
+                        <callService input="{navajo:/activities/InitQueryPersonActivities}" service="'officialportal/ProcessQueryActivities'" />
+                    </onActionPerformed>
+                </c.button>
+                <c.button icon="{resource:/icons/btn_rapporteur.png}" tooltip="'rapporteur'" visible="{property:/officialportal/ProcessLogin:/Authenticated/IsOfficialOfficial} AND ( {system:/union} == 'KNVB' OR {system:/union} == 'KNKV' )">
+                    <onActionPerformed>
+                        <instantiate force="true" id="'current'" name="'reporterActivityList'" location="{component://init/main}" />
+                        <callService service="'activities/InitQueryPersonActivities'" cached="true"/>
+                        <setValue from="false" to="{propertyref:/activities/InitQueryPersonActivities:/PersonActivities/IgnorePast}" />
+                        <setValue from="true" to="{propertyref:/activities/InitQueryPersonActivities:/PersonActivities/PastOnly}" />
+                        <setValue from="true" to="{propertyref:/activities/InitQueryPersonActivities:/PersonActivities/ShowPreviousSeason}" />
+                        <setValue from="true" to="{propertyref:/activities/InitQueryPersonActivities:/PersonActivities/IgnoreConcept}" />
+                        <setValue from="true" to="{propertyref:/activities/InitQueryPersonActivities:/PersonActivities/ShowOfficialOfficialOnly}" />
+                        <setValue from="{property:/officialportal/ProcessLogin:/UserData/UserName}" to="{propertyref:/activities/InitQueryPersonActivities:/PersonActivities/PersonId}" />
+                        <callService input="{navajo:/activities/InitQueryPersonActivities}" service="'officialportal/ProcessQueryOfficialOfficialActivities'" />
+                    </onActionPerformed>
+                </c.button>
+                <!-- aanwijzer -->
+                <!-- <c.button icon="{resource:/icons/btn_rapporteur.png}" tooltip="'aanwijzer'" visible="{property:/officialportal/ProcessLogin:/Authenticated/IsOtherOfficial} AND {system:/union} == 'KNKV'">
+                    <onActionPerformed>
+                        <instantiate force="true" id="'current'" name="'assignerActivityList'" location="{component://init/main}" />
+                        <callService service="'activities/InitQueryPersonActivities'" cached="true"/>
+                        <setValue from="{property:/officialportal/ProcessLogin:/UserData/UserName}" to="{propertyref:/activities/InitQueryPersonActivities:/PersonActivities/PersonId}" />
+                        <callService input="{navajo:/activities/InitQueryPersonActivities}" service="'official/ProcessQueryMatchAssigner'" />
+                    </onActionPerformed>
+                </c.button>-->
+ 
+                <!-- verhinderingen -->
+               
+                <c.button icon="{resource:/icons/btn_verhinderingen.png}" text="''" tooltip="'opgeven verhinderingsdata'" visible="{system:/union} == 'KNHB' OR {system:/union} == 'KNKV'">
+                    <onActionPerformed>
+                        <instantiate force="true" id="'boOverviewWindow'" name="'boOverviewWindow'" location="{component://init/main}" />
+                        <callService input="{navajo:/officialportal/ProcessLogin}" service="'official/ProcessGetOfficialIdFromPersonId'" />                        
+                        <callService input="{navajo:/official/ProcessGetOfficialIdFromPersonId}" service="'official/ProcessQueryBlackOutDays'"/>
+                    </onActionPerformed>
+                </c.button>
+                
+                <c.button icon="{resource:/icons/btn_speeldagen.png}" text="''" tooltip="'Download speeldagen'" visible="{system:/union} == 'KNHB'">
+                    <onActionPerformed>
+                        <instantiate force="true" id="'knhbDownloadWindow'" name="'knhbDownloadWindow'" location="{component://init/main}" />
+                      </onActionPerformed>
+                </c.button>
+                
+                
+                <c.button icon="{resource:/icons/btn_mijn_gegevens.png}" text="''" tooltip="'uw gegevens aanpassen'">
+                    <onActionPerformed>
+                        <instantiate force="true" id="'personDetailWindow'" name="'personDetailWindow'" location="{component://init/main}" />
+                        <reloadNavajo service="{navajo:/officialportal/ProcessQueryMember}" />
+                    </onActionPerformed>
+                </c.button>
+                
+                <c.button   icon="{resource:/icons/btn_telefoonboek.png}" tooltip="'Telefoonboek'" >
+                    <onActionPerformed>
+                        <instantiate force="true" id="'selectPhonebookWindow'" name="'selectPhonebookWindow'" location="{component://init/main}" />
+          		    </onActionPerformed>
+                </c.button>
+                
+                <c.button icon="{resource:/icons/btn_abonnementen.png}" text="''" tooltip="'Abonnementen'" visible="{system:/union} == 'KNVB'">
+                    <onActionPerformed>
+                        <instantiate force="true" id="'subscriptionWindow'" name="'subscriptionWindow'" location="{component://init/main}" />
+                    </onActionPerformed>
+                </c.button>
+               
+                <c.button icon="{resource:/icons/Competitiegegevens.png}" text="''" tooltip="'Competitie gegevens'">
+                    <onActionPerformed>
+                        <instantiate force="true" id="'competitionSearchWindow'" name="'competitionSearchWindow'" location="{component://init/main}" />
+                    </onActionPerformed>
+                </c.button>
+ 
+                <!--<c.button icon="{resource:/icons/btn_rapportages.png}" text="''" tooltip="'rapporten'">
+                    <onActionPerformed>
+                        <showInfo text="'.. er zijn nog geen rapporten beschikbaar ..'" />                     
+                    </onActionPerformed>
+                </c.button>-->
+                <c.button icon="{resource:/icons/btn_mailbox.png}" tooltip="'Mail lezen'" visible="{system:/union} == 'KNVB'">
+                    <onActionPerformed>
+                        <mail.connect path="{component:/init/mail}" />
+                        <instantiate force="true" id="'current'" name="'mailList'" location="{component://init/main}" />
+                        <callService connector="'mail'" service="'InitGetMessages'" />
+                        <set element="{propertyref:/InitGetMessages:/Folder/Name}" value="'INBOX'" />
+                        <callService connector="'mail'" input="{navajo:/InitGetMessages}" service="'GetInboxMessages'" />
+                    </onActionPerformed>
+                </c.button>
+<!--                <c.htmllabel text="&lt;div style='height:245px;width:1px'/&gt;"/>-->
+                <c.button icon="{resource:/icons/btn_wijzig_wachtwoord.png}" text="''" tooltip="'wachtwoord wijzigen'">
+                    <onActionPerformed>
+                        <instantiate force="true" id="'currentDetail'" name="'passwordWindow'" location="{component://init/main}" />
+                        <callService service="'external/subscriptions/InitUpdateMailUser'" />
+                        <setValue from="{property:/officialportal/ProcessLogin:/UserData/UserName}" to="{propertyref:/external/subscriptions/InitUpdateMailUser:Login/Username}" />
+                        <callService input="{navajo:/external/subscriptions/InitUpdateMailUser}" service="'external/subscriptions/ProcessQueryMailUser'" />
+                    </onActionPerformed>
+                </c.button>
+                <c.button icon="{resource:/icons/btn_help.png}" text="''" tooltip="'informatie over deze voorziening'">
+                  <onActionPerformed>
+                      <openBrowser url="'http://downloadcentrum.knvb.nl/sportlink/knvb/document/knvb%20handleiding%20official%20portaal(op).pdf?id=13645'" />                  
+                  </onActionPerformed>
+                </c.button>
+                <c.button icon="{resource:/icons/btn_instructies_dwf.png}" text="''" tooltip="'Instructiefilms DWF'"  visible="{system:/union} == 'KNVB'">
+                    <onActionPerformed>
+                    
+                      <openBrowser url="'resource/dwf_help_oao.html'" />                  
+                    </onActionPerformed>
+                </c.button>
+                <c.button icon="{resource:/icons/btn_uitloggen.png}" text="''" tooltip="'uitloggen en deze applicatie verlaten'">
+                    <onActionPerformed>
+                        <exit />
+                    </onActionPerformed>
+                </c.button>
+            </c.column>
+        </l.border>
+    </d.tipi>
+</tid>

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<tid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" errorhandler="error" xsi:noNamespaceSchemaLocation="tipi.xsd">
+	<d.window closable="true" h="400" name="chargeDocumentSearchWindow" resizable="true" title="'Zoek uitspraakdocumenten'"
+		movable="true" w="1180" x="30" y="70">
+		<onInstantiate>
+			<callService service="'discipline/InitSearchDisciplineDocuments'" />
+			<dumpNavajo input="{navajo:/discipline/InitSearchDisciplineDocuments}" />
+		</onInstantiate>
+		<l.border>
+			<c.gridpanel constraint="Center" opaque="true" id="search" service="discipline/InitSearchDisciplineDocuments"
+				columnWidth="'330 820'">
+				<c.property showlabel="true" width="200" label_indent="130" propertyname="'/Search/SeasonFrom'">
+				</c.property>
+				<onLoad>
+					<setDescription description="'No animals today'" property="{propertyref:/discipline/InitSearchDisciplineDocuments:/Search/TypeOfSentence}"/>
+				</onLoad>
+				<c.column constraint="rowspan:4" id="codes">
+				<c.property showlabel="true" width="200" label_indent="100" propertyname="'/Search/TypeOfSentence'">
+					<onValueChanged>
+						<!-- ExcessChargeCodes NonExcessChargeCodes AllChargeCodes -->
+						<block condition="{event:/propertyValue}=='BOTH'">
+							<property.attribute path="{component:/../all}" visible="true" />
+							<property.attribute path="{component:/../excess}" visible="false" />
+							<property.attribute path="{component:/../nonexcess}" visible="false" />
+						</block>
+						<block condition="{event:/propertyValue}=='EXTRAORDINARY'">
+							<property.attribute path="{component:/../all}" visible="false" />
+							<property.attribute path="{component:/../excess}" visible="false" />
+							<property.attribute path="{component:/../nonexcess}" visible="true" />
+						</block>
+						<block condition="{event:/propertyValue}=='EXCESS'">
+							<property.attribute path="{component:/../all}" visible="false" />
+							<property.attribute path="{component:/../excess}" visible="true" />
+							<property.attribute path="{component:/../nonexcess}" visible="false" />
+						</block>
+						<log text="'Monkey:'+{event:/propertyValue}" level="'info'" />
+					</onValueChanged>
+				</c.property>
+				<c.label text="' '"/>
+				
+					<c.property id="all" showlabel="true" width="720" label_indent="100" selectiontype="'list'" propertyname="'/Search/AllChargeCodes'"
+						visible="true">
+					</c.property>
+					<c.property id="excess" showlabel="true" width="720" label_indent="100" selectiontype="'list'" propertyname="'/Search/ExcessChargeCodes'"
+						visible="false">
+					</c.property>
+					<c.property id="nonexcess" showlabel="true" width="720" label_indent="100" selectiontype="'list'" visible="false"
+						propertyname="'/Search/NonExcessChargeCodes'">
+					</c.property>
+				</c.column>
+				<c.property showlabel="true" width="200" label_indent="130" propertyname="'/Search/SeasonTo'">
+				</c.property>
+				<c.property showlabel="true" width="200" label_indent="130" propertyname="'/Search/SearchTags'">
+				</c.property>
+				<c.property showlabel="true" width="200" label_indent="130" propertyname="'/Search/Content'">
+				</c.property>
+
+
+
+
+			</c.gridpanel>
+			<c.toolbar constraint="South" id="toolbar">
+				<c.button tooltip="'Zoek documenten'" text="'Zoek'" id="searchButton">
+					<onActionPerformed>
+						<!-- <block expression="{property:/external/competition/ProcessSelectPool:/PoolData/ClassId} == '-1'"> <showError text="'Kies 
+							een klasse of een poule'"/> <breakEvent/> </block> -->
+						<block condition="{property:/discipline/InitSearchDisciplineDocuments:/Search/TypeOfSentence}=='BOTH'">
+							<log text="'BOTH'" />
+							<copyProperty message="{message:/discipline/InitSearchDisciplineDocuments:/Search}" property="{propertyref:/discipline/InitSearchDisciplineDocuments:Search/AllChargeCodes}"
+								propertyName="'ChargeCode'" />
+						</block>
+						<block condition="{property:/discipline/InitSearchDisciplineDocuments:/Search/TypeOfSentence}=='EXTRAORDINARY'">
+							<log text="'EXTRA'" />
+							<copyProperty message="{message:/discipline/InitSearchDisciplineDocuments:/Search}" property="{propertyref:/discipline/InitSearchDisciplineDocuments:Search/NonExcessChargeCodes}"
+								propertyName="'ChargeCode'" />
+						</block>
+						<block condition="{property:/discipline/InitSearchDisciplineDocuments:/Search/TypeOfSentence}=='EXCESS'">
+							<log text="'EXCEDSS!'" />
+							<copyProperty message="{message:/discipline/InitSearchDisciplineDocuments:/Search}" property="{propertyref:/discipline/InitSearchDisciplineDocuments:Search/ExcessChargeCodes}"
+								propertyName="'ChargeCode'" />
+						</block>
+
+						<block condition="Size({property:/discipline/InitSearchDisciplineDocuments:/Search/ChargeCode})==0 AND Trim({property:/discipline/InitSearchDisciplineDocuments:/Search/Content})=='' AND Trim({property:/discipline/InitSearchDisciplineDocuments:/Search/SearchTags})=='' ">
+							<showError text="'U dient een trefwoord, inhoudelijk trefwoord, of een (selectie van) strafcodes in te voeren.'" />
+							<log text="'BOOM: '+Size({property:/discipline/InitSearchDisciplineDocuments:/Search/ChargeCode})" />
+							<breakEvent />
+						</block>
+
+						<!-- -->
+						<dumpNavajo input="{navajo:/discipline/InitSearchDisciplineDocuments}" />
+						<callService service="'discipline/ProcessSearchDisciplineDocuments'" input="{navajo:/discipline/InitSearchDisciplineDocuments}" />
+						<block condition="Size({message:/discipline/ProcessSearchDisciplineDocuments:/ResultSentence})==0">
+							<showInfo text="'Geen resultaten gevonden.'" />
+							<breakEvent />
+						</block>
+						<dumpNavajo input="{navajo:/discipline/ProcessSearchDisciplineDocuments}" />
+						<window.instantiate name="'chargeDocumentResultWindow'" location="{component://init/main}" force="true"
+							id="'chargeDocResult'" />
+						<injectNavajo service="'discipline/ProcessSearchDisciplineDocuments'" navajo="{navajo:/discipline/ProcessSearchDisciplineDocuments}" />
+					</onActionPerformed>
+				</c.button>
+<!-- 
+				<c.button tooltip="'Zoek documenten'" text="'ZoekTest'" id="searchButton2">
+					<onActionPerformed>
+						<window.instantiate name="'chargeDocumentResultWindow'" location="{component://init/main}" force="true" id="'noMatter'" />
+					</onActionPerformed>
+				</c.button>
+ -->
+			</c.toolbar>
+		</l.border>
+	</d.window>
+</tid>

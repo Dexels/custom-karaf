@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<tid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" errorhandler="error"
+   xsi:noNamespaceSchemaLocation="tipi.xsd">
+   <d.window closable="true" h="350" name="refereeActivityList" resizable="true"
+      title="'Scheidsrechter aanstellingen'" movable="true" w="580" x="170" y="50">
+
+      <l.border>
+         <c.tipitable id="table" messagepath="'Activities'" service="officialportal/ProcessQueryActivities">
+            <column name="ActivityName" label="'Activiteit'" editable="false" size="150" />
+            <column name="CalendarDate" label="'Datum'" editable="false" size="60" />
+            <!-- <column name="StartTime" label="'Starttijd'"  editable="false" size="50"/> -->
+            <column name="CompetitionName" label="'Klasse'" editable="false" size="50" />
+            <column name="FacilityName" label="'Accommodatie'" editable="false" size="50" />
+            <!--  <column name="Status" label="'Status'"  editable="false" size="50"/>-->
+   <onSelectionChanged>
+                
+   </onSelectionChanged>
+         </c.tipitable>
+
+         <c.toolbar constraint="South:30">
+
+            <c.button text="'Accommodatie'" style="'LargeLinkButton'" >
+               <onActionPerformed>
+                  <block expression="{attribute:/~/table:selectedIndex}==-1">
+                     <showInfo text="'Selecteer aub een activiteit.'"/>
+                     <breakEvent/>
+                  </block>
+                     <callService service="'facility/InitUpdateFacility'" />
+                     <setValue from="{property:/~/table:selectedMessage:FacilityId}"
+                        to="{propertyref:/facility/InitUpdateFacility:/Facility/FacilityId}" />
+                       <callService input="{navajo:/facility/InitUpdateFacility}"
+                        service="'facility/ProcessQueryFacility'" />
+                        <instantiate force="true" id="'currentDetail'" name="'facilityDetailWindow'" location="{component://init/main}" />
+                        <reloadNavajo service="{navajo:/facility/ProcessQueryFacility}"/>
+                        <setValue to="{attributeref:/~:visible}" from="false"/>
+                    </onActionPerformed>
+            </c.button>
+            <c.button text="'Wedstrijd'" style="'LargeLinkButton'" >
+            </c.button>
+         </c.toolbar>
+      </l.border>
+
+   </d.window>
+</tid>

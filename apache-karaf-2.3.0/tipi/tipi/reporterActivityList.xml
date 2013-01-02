@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<tid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" errorhandler="error" xsi:noNamespaceSchemaLocation="tipi.xsd">
+	<d.window closable="true" h="525" name="reporterActivityList" resizable="true" title="'Uw rapporteur activiteiten'" movable="true"  w="900" x="20" y="50">
+		<onInstantiate>
+			<callService service="'officialportal/InitGetReimbursementInfo'" />
+			<callService service="'officialportal/InitQueryMatch'" />
+			<callService service="'officialportal/InitGetMatchOfficials'" />
+		</onInstantiate>
+		<l.border>
+			<c.tipitable id="table" messagepath="'Activities'" service="officialportal/ProcessQueryOfficialOfficialActivities">
+				<column name="ActivityName" label="'Activiteit'" editable="false" size="200" />
+				<column name="Status" label="'Status'" editable="false" size="80" />
+				<column name="SportDescription" label="'Type'" editable="false" size="50" />
+				<column name="FunctionDescription" label="'Uw rol'" editable="false" size="100" />
+			        <column name="FormStatus" label="'Evaluatie status'" editable="false" size="85" />
+				<column name="VisitedOfficialLastName" label="'Achternaam'" editable="false" size="70" />
+				<column name="CalendarDate" label="'Datum'" editable="false" size="70" />
+				<column name="StartTime" label="'Tijd'" editable="false" size="50" />
+				<column name="ExternalMatchId" label="'Wedstr.'" editable="false" size="50" />
+				<onReport>
+					<openBinary binary="{event:/report}"  newWindow="true"/>
+				</onReport>
+			</c.tipitable>
+			<c.toolbar id="toolbar" constraint="South">
+				<c.button id="accommodation" text="'Accommodatiegegevens'" >
+					<onActionPerformed>
+						<block expression="{attribute:/~/table:selectedIndex} == -1">
+							<showInfo text="'Selecteer a.u.b. een activiteit.'" />
+						</block>
+						<block expression="{attribute:/~/table:selectedIndex} != -1">
+							<block expression="GetPropertyValue({attribute:/~/table:selectedMessage},'FacilityId') == null">
+								<showInfo text="'Van deze activiteit zijn geen accommodatiedetails beschikbaar.'" />
+							</block>
+                                                        <setValue from="{property:/~/table:selectedMessage:OfficialId}" to="{propertyref:/officialportal/InitGetReimbursementInfo:/AssignmentData/OfficialId}"/>
+                                                        <setValue from="{property:/~/table:selectedMessage:ActivityId}" to="{propertyref:/officialportal/InitGetReimbursementInfo:/AssignmentData/MatchId}"/>
+							<callService input="{navajo:/officialportal/InitGetReimbursementInfo}" service="'officialportal/ProcessGetReimbursementInfo'" />
+							<instantiate force="true" id="'currentDetail'" name="'facilityDetailWindow'" location="{component://init/main}" />
+							<reloadNavajo service="{navajo:/officialportal/ProcessGetReimbursementInfo}" />
+							<!--<setValue to="{attributeref:/~:visible}" from="false" />-->
+						</block>
+					</onActionPerformed>
+				</c.button>
+				<c.button id="match" text="'Wedstrijdgegevens'">
+					<onActionPerformed>
+						<block expression="{attribute:/~/table:selectedIndex} == -1">
+							<showInfo text="'Selecteer a.u.b. een activiteit.'" />
+						</block>
+						<block expression="{attribute:/~/table:selectedIndex} != -1">
+							<block expression="GetPropertyValue({attribute:/~/table:selectedMessage},'ExternalMatchId') == null">
+								<showInfo text="'Van deze activiteit zijn geen wedstrijddetails beschikbaar.'" />
+							</block>
+							<block expression="GetPropertyValue({attribute:/~/table:selectedMessage},'ExternalMatchId') != null">
+                                                                <setValue from="{property:/~/table:selectedMessage:ActivityId}" to="{propertyref:/officialportal/InitQueryMatch:/Match/MatchId}"/>
+                                                                <setValue from="{global:/username}" to="{propertyref:/officialportal/InitQueryMatch:/Match/PersonId}"/>
+								<setValue from="{property:/~/table:selectedMessage:ActivityId}" to="{propertyref:/officialportal/InitGetMatchOfficials:/MatchData/MatchId}" />
+								<setValue from="{global:/username}" to="{propertyref:/officialportal/InitGetMatchOfficials:/MatchData/PersonId}" />
+								<callService input="{navajo:/officialportal/InitQueryMatch}" service="'officialportal/ProcessQueryMatch'" />
+								<instantiate force="true" id="'currentDetail'" name="'matchDetailWindow'" location="{component://init/main}" />
+								<callService input="{navajo:/officialportal/InitGetMatchOfficials}" service="'officialportal/ProcessGetMatchOfficials'" />
+								<setValue from="{property:/~/table:selectedMessage:ActivityName}" to="{attributeref://init/main/currentDetail:title}" />
+								<reloadNavajo service="{navajo:/officialportal/ProcessQueryMatch}" />
+<!--								<setValue to="{attributeref:/~:visible}" from="false" />-->
+							</block>
+						</block>
+					</onActionPerformed>
+				</c.button>
+				<!--<c.button id="oeReportBtn" icon="{resource:/icons/btn_rapportages.png}" tooltip="'Weergave evaluatie formulier'" constraint="align:right middle; padding:5 5 5 5">
+					<onActionPerformed>
+						<block expression="{attribute:/~/table:selectedIndex}  == -1">
+							<showInfo text="'Om het rapportage te openen, dient u een wedstrijd te selecteren.'" />
+						</block>
+						<block expression="{attribute:/~/table:selectedIndex} != -1">
+							<block
+								expression="{property:/~/table:selectedMessage:FormStatus} != 'FINAL' AND ({property:/~/table:selectedMessage:FormStatus} != 'CLOSED') AND ({property:/~/table:selectedMessage:FormStatus} != 'CHANGED')">
+								<showInfo text="'U kunt alleen rapportages afdrukken van definitieve, opgeslagen of gesloten formulieren.'" />
+							</block>
+							<block
+								expression="({property:/~/table:selectedMessage:FormStatus} == 'FINAL') OR ({property:/~/table:selectedMessage:FormStatus} == 'CLOSED') OR ({property:/~/table:selectedMessage:FormStatus} == 'CHANGED')">
+								<block expression="{property:/~/table:selectedMessage:FormId} == 21">
+									<callService service="'reports/InitOfficialEvalReport'" cached="true"/>
+									<setValue to="{propertyref:/reports/InitOfficialEvalReport:/Reports@0/Parameters@2/Value}" from="{property:/~/table:selectedMessage:ExternalMatchId}" />
+									<setValue to="{propertyref:/reports/InitOfficialEvalReport:/Reports@0/Parameters@3/Value}" from="{property:/~/table:selectedMessage:VisitedOfficialLastName}" />
+									<setValue to="{propertyref:/reports/InitOfficialEvalReport:/Reports@0/Parameters@1/Value}" from="{property:/~/table:selectedMessage:SeasonId}" />
+									<callService service="'reports/ProcessRunReports'" input="{navajo:/reports/InitOfficialEvalReport}" />
+									<openBinary expression="'{property:/reports/ProcessRunReports:/Reports@0/ReportData}'" />
+								</block>
+								<block expression="{property:/~/table:selectedMessage:FormId} == 22">
+									<callService service="'reports/InitOfficialEvalReportFutsal'" cached="true"/>
+									<setValue to="{propertyref:/reports/InitOfficialEvalReportFutsal:/Reports@0/Parameters@2/Value}" from="{property:/~/table:selectedMessage:ExternalMatchId}" />
+									<setValue to="{propertyref:/reports/InitOfficialEvalReportFutsal:/Reports@0/Parameters@3/Value}" from="{property:/~/table:selectedMessage:VisitedOfficialLastName}" />
+									<setValue to="{propertyref:/reports/InitOfficialEvalReportFutsal:/Reports@0/Parameters@1/Value}" from="{property:/~/table:selectedMessage:SeasonId}" />
+									<dumpNavajo input="{navajo:/reports/InitOfficialEvalReportFutsal}"/>
+									<callService service="'reports/ProcessRunReports'" input="{navajo:/reports/InitOfficialEvalReportFutsal}" />
+									<openBinary expression="'{property:/reports/ProcessRunReports:/Reports@0/ReportData}'" />
+								</block>
+								<block expression="{property:/~/table:selectedMessage:FormId} == 23">
+									<callService service="'reports/InitOfficialEvalReportFutsalEd'" cached="true"/>
+									<setValue to="{propertyref:/reports/InitOfficialEvalReportFutsalEd:/Reports@0/Parameters@2/Value}" from="{property:/~/table:selectedMessage:ExternalMatchId}" />
+									<setValue to="{propertyref:/reports/InitOfficialEvalReportFutsalEd:/Reports@0/Parameters@3/Value}" from="{property:/~/table:selectedMessage:VisitedOfficialLastName}" />
+									<setValue to="{propertyref:/reports/InitOfficialEvalReportFutsalEd:/Reports@0/Parameters@1/Value}" from="{property:/~/table:selectedMessage:SeasonId}" />
+									<callService service="'reports/ProcessRunReports'" input="{navajo:/reports/InitOfficialEvalReportFutsalEd}" />
+									<openBinary  expression="'{property:/reports/ProcessRunReports:/Reports@0/ReportData}'" />
+								</block>
+							</block>
+						</block>
+					</onActionPerformed>
+				</c.button>-->
+			</c.toolbar>
+		</l.border>
+	</d.window>
+</tid>

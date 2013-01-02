@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<tid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" errorhandler="error" xsi:noNamespaceSchemaLocation="tipi.xsd">
+	<d.window closable="true" h="550" name="mailList" resizable="true" title="'Binnengekomen post'" movable="true" w="764"
+		x="30" y="50">
+		<l.border>
+			<c.toolbar constraint="North:60" service="GetInboxMessages">
+				<onLoad>
+					<button.attribute path="{component:/./last}" enabled="{attribute://init/mail:currentPage}!={attribute://init/mail:pageCount}" />
+					<button.attribute path="{component:/./next}" enabled="{attribute://init/mail:currentPage}!={attribute://init/mail:pageCount}" />
+					<button.attribute path="{component:/./first}" enabled="{attribute://init/mail:currentPage}!=0" />
+					<button.attribute path="{component:/./previous}" enabled="{attribute://init/mail:currentPage}!=0" />
+					<label.attribute path="{component:/./pageCountLabel}"
+						text="' Pagina ' + {attribute://init/mail:currentPage} + ' van '+{attribute:/init/mail:pageCount}" />
+				</onLoad>
+				<!--<c.property propertyname="'Page/CurrentPage'" showlabel="false"> <onValueChanged> <mail.attribute path="{component://init/mail}" 
+					currentPage="{property:/GetInboxMessages:/Page/CurrentPage}" /> </onValueChanged> </c.property> -->
+				<c.button icon="{resource:/icons/media_beginning.png}" id="first">
+					<onActionPerformed>
+						<mail.firstPage path="{component://init/mail}" />
+					</onActionPerformed>
+				</c.button>
+				<c.button icon="{resource:/icons/media_step_back.png}" id="previous">
+					<onActionPerformed>
+						<mail.previousPage path="{component://init/mail}" />
+					</onActionPerformed>
+				</c.button>
+				<c.button icon="{resource:/icons/media_step_forward.png}" id="next">
+					<onActionPerformed>
+						<mail.nextPage path="{component://init/mail}" />
+					</onActionPerformed>
+				</c.button>
+				<c.button icon="{resource:/icons/media_end.png}" id="last">
+					<onActionPerformed>
+						<mail.lastPage path="{component://init/mail}" />
+					</onActionPerformed>
+				</c.button>
+				<c.label constraint="East:150" id="pageCountLabel" text="''" />
+			</c.toolbar>
+			<c.tipi id="Split" enabled="true" constraint="Center">
+				<l.border>
+					<c.tipitable constraint="North:150" id="messageTable" filtersvisible="false" headervisible="false" service="officialportal/ProcessGetOfficialEmailList"
+						messagepath="'MailBox/Mail'">
+						<column name="MessageNumber" label="'nr.'" editable="false" size="50" />
+						<column name="Subject" label="'Onderwerp'" editable="false" size="200" />
+						<column name="SentDate" label="'Datum'" editable="false" size="100" />
+						<column name="From" label="'Afzender'" editable="false" condition="{attributeref:/..:selected}" />
+						<onSelectionChanged>
+							<setValue from="GetPropertyValue({event:/selectedMessage},'MessageNumber')" to="{propertyref:/InitGetMessages:Folder/MessageNumber}" />
+							<callService connector="'mail'" input="{navajo:/InitGetMessages}" service="'GetMessage'" />
+							<!-- <setValue to="{attributeref:/../browserpane/browser:binary}" from="{property:/GetMessage:Mail/Parts@0/Content}" /> -->
+							<setValue to="{attributeref:/../browserpane/browser:url}" from="CreateExpressionUrl({context:/},CreateEchoMailUrl({context:/},{navajo:/GetMessage},'Temp'))" />
+						</onSelectionChanged>
+					</c.tipitable>
+					<c.tipi id="browserpane" constraint="Center" style="'mail'">
+						<l.border>
+							<c.browser id="browser" constraint="Center" url="'tipi/blanco.html'" />
+						</l.border>
+					</c.tipi>
+				</l.border>
+			</c.tipi>
+			<c.toolbar constraint="South:50">
+				<c.button text="'Printvriendelijk'">
+					<onActionPerformed>
+						<openBrowser url="CreateExpressionUrl({context:/},CreateEchoMailUrl({context:/},{navajo:/GetMessage},'Temp'))" />
+					</onActionPerformed>
+				</c.button>
+				<c.button text="'Verwijderen'">
+					<onActionPerformed>
+						<set element="{propertyref:/InitGetMessages:/Folder/MessageNumber}" value="GetPropertyValue({attribute:/../../Split/messageTable:selectedMessage},'MessageNumber')" />
+						<callService service="'officialportal/ProcessDeleteOfficialEmail'" input="{navajo:/InitGetMessages}" connector="'mail'" />
+						<callService service="'GetInboxMessages'" input="{navajo:/InitGetMessages}" connector="'mail'" />
+					</onActionPerformed>
+				</c.button>
+			</c.toolbar>
+		</l.border>
+	</d.window>
+</tid>

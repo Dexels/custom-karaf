@@ -1,0 +1,15 @@
+@import "../base/styles.css";
+@import "../chameleon/styles.css";
+@import "../oao/styles_generated.css";
+@import "../oao/styles.css";
+/** 
+ * "optional-" prefix means that the style is not necessarily used, it can be left blank
+ * "generated-" prefix means that the style is calculated from some other color, and not directly selected by the editor user
+ *
+ **/
+
+/* Application background */
+.v-app {
+	background: rgb(255,129,129);
+	background-image:url('logo_knhb.png');
+}

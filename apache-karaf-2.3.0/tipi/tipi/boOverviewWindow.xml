@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<tid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" errorhandler="error" xsi:noNamespaceSchemaLocation="tipi.xsd">
+    <d.window closable="true" h="525" name="boOverviewWindow" resizable="true" title="'Verhinderingen'" movable="true" w="800" x="170" y="50">
+        <l.border>
+        
+            <c.tipitable id="boTable" messagepath="'BlackOutDays'" service="official/ProcessQueryBlackOutDays">
+                <column name="CalendarDate" label="'datum'" size="100" />
+                <column name="StartTime" label="'starttijd'" size="100" />
+                <column name="EndTime" label="'eindtijd'" size="100" />
+                <column name="Info" label="'info'" size="225" />
+                <column name="UnionInfo" label="'bondsinfo'" size="225" />
+                <onLoad>
+                	<block expression="{property:/official/ProcessQueryBlackOutDays:HasScheduledMatches/HasScheduledMatches}">
+                		<showInfo text="'U bent al aangesteld. Neemt u contact op met uw aanwijzer.'"/>
+                	</block>
+                </onLoad>
+            </c.tipitable>
+            <c.toolbar id="toolbar" constraint="South:50">
+                <c.button text="'Enkele datum toevoegen'" tooltip="'enkele verhinderingsdatum toevoegen'">
+                    <onActionPerformed>
+                        <instantiate force="true" id="'boAddDialog'" name="'boAddDialog'" location="{component://init/main}" />
+                    </onActionPerformed>
+                </c.button>
+                <c.button text="'Meerdere datums toevoegen'" tooltip="'datuminterval toevoegen'">
+                    <onActionPerformed>
+                        <instantiate force="true" id="'boAddMultiDialog'" name="'boAddMultiDialog'" location="{component://init/main}" />
+                    </onActionPerformed>
+                </c.button>
+                <c.button text="'Verwijderen'" tooltip="'verwijderen'">
+                    <onActionPerformed>
+                        <setValue from="true" to="{propertyref:/../../boTable:selectedMessage:Delete}" />
+                        <callService input="{navajo:/official/ProcessQueryBlackOutDays}" service="'official/ProcessDeleteBlackOutDays'" />
+                        <callService input="{navajo:/official/ProcessGetOfficialIdFromPersonId}" service="'official/ProcessQueryBlackOutDays'" />
+                    </onActionPerformed>
+                </c.button>
+            </c.toolbar>
+        </l.border>
+    </d.window>
+</tid>

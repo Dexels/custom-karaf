@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" errorhandler="error" xsi:noNamespaceSchemaLocation="../tipi.xsd">
+    <d.dialog h="570" w="400" name="selectOrganizationDialog" title="'Kies vereniging'">      
+        <l.border>
+            <c.panel constraint="Center" border="CreateTitledBorder('Vereniging')" id="upperPanel">
+                <l.border>
+                    <c.tipitable id="organizationsTable" messagepath="'Organizations'" showRowHeaders="false" service="vla/tools/ProcessSelectOrganization">
+                        <column editable="false" label="'Relatiecode'" name="OrganizationId" size="100" />
+                        <column editable="false" label="'Naam'" name="OrganizationName" size="280" />
+                        <onActionPerformed>
+                            <performTipiMethod name="'fireAction'" path="{component:/../../toolbar/OkButton}" />
+                        </onActionPerformed>
+                        <onEnter>
+                            <performTipiMethod name="'fireAction'" path="{component:/../../toolbar/OkButton}" />
+                        </onEnter>
+                        <onLoad>
+                            <setValue from="true" to="{attributeref:/~/toolbar/OkButton:enabled}" />
+                        </onLoad>
+                    </c.tipitable>
+                </l.border>
+            </c.panel>
+            <c.toolbar constraint="South" floatable="false" id="toolbar">
+                <l.flow alignment="right" gap="5">
+                    <c.button icon="{resource:/tipi/icons/navigate_check_green.png}" id="OkButton" tooltip="'Kies'" enabled="false" text="'Kies'">
+                        <onActionPerformed>
+                            <set value="{property:/~/upperPanel/organizationsTable:selectedMessage:OrganizationId}" element="{global:/searchResultId}" />
+                            <set value="{property:/~/upperPanel/organizationsTable:selectedMessage:OrganizationIdAndName}" element="{global:/searchResultName}" />
+                            <set value="{property:/~/upperPanel/organizationsTable:selectedMessage:OrganizationIdAndName}" element="{globalref:/searchKey}" />
+                            <dialog.hide path="{component:/~}"/>                            
+                        </onActionPerformed>
+                    </c.button>
+                </l.flow>
+            </c.toolbar>
+        </l.border>
+        <onWindowClosed>
+            <block condition="{global:/sourceWindow} == 'addressBookWindow'">
+                <setValue to="{propertyref:/external/addressbook/InitSearchClubOfficials:/SearchCriteria/OrganizationId}" from="null"/>
+            </block>
+            <dialog.hide path="{component:/~}" /> 
+        </onWindowClosed>
+    </d.dialog>
+</tid>

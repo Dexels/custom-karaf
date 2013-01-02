@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<tid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    errorhandler="error" xsi:noNamespaceSchemaLocation="tipi.xsd">
+    <d.window closable="true" w="800" h="425" name="personDetailWindow" x="170" y="80"
+        resizable="true"
+        title="'Gegevens voor: '+ {global:/FullName} + ' (' + {property:/officialportal/ProcessQueryMember:MemberData/PersonId} + ')'"
+        movable="true">
+        <onInstantiate>
+            <callService service="'official/InitQueryOfficials'" />
+            <setValue from="{global:/username}"
+                to="{propertyref:/official/InitQueryOfficials:/Member/PersonId}" />
+            <setValue from="{global:/username}"
+                to="{propertyref:/member/InitUpdateMember:/SelectGlobals/PersonId}" />
+            <callService input="{navajo:/official/InitQueryOfficials}"
+                service="'officialportal/ProcessQueryOfficialFunctions'" />
+            <callService input="{navajo:/member/InitUpdateMember}"
+                service="'member/ProcessGetClubMemberships'" />
+            <callService input="{navajo:/official/InitQueryOfficials}"
+                service="'member/ProcessQueryAssAdminFunctions'" />
+        </onInstantiate>
+        <onWindowClosed>
+            <setValue from="true" to="{attributeref://init/main/current:visible}" />
+        </onWindowClosed>
+        <l.border>
+            <c.row id="persondetails" constraint="North:180" service="officialportal/ProcessQueryMember">
+                <c.column id="naw" border="{border:/titled-Persoonsgegevens}"  >
+                    <c.label text="{global:/FullName}" />
+                    <c.label
+                        text="{property:/officialportal/ProcessQueryMember:MemberData/StreetName}+' '+{property:/officialportal/ProcessQueryMember:MemberData/AddressNumber}+' '+{property:/officialportal/ProcessQueryMember:MemberData/AddressNumberAppendix}" />
+                    <c.label
+                        text="{property:/officialportal/ProcessQueryMember:MemberData/ZipCode}+' '+{property:/officialportal/ProcessQueryMember:MemberData/City}" />
+                </c.column>
+                <c.column border="{border:/titled-Communicatie}" service="officialportal/ProcessQueryMember">
+                                        <onLoad>
+                                          <block expression="{system:/union} == 'KNKV'">
+                                             <setDirection direction="'out'" property="{propertyref:/officialportal/ProcessQueryMember:/MemberData/EmailData}" />
+                                          </block>
+                                          <setDescription description="'Email'" property="{propertyref:/officialportal/ProcessQueryMember:/MemberData/EmailData}"/>
+                                          <setDescription description="'Mobiel'" property="{propertyref:/officialportal/ProcessQueryMember:/MemberData/MobileData}"/>
+                                          <setDescription description="'Telefoon'" property="{propertyref:/officialportal/ProcessQueryMember:/MemberData/TelephoneData}"/>
+                                        </onLoad>
+                     
+                    <c.property propertyname="'MemberData/TelephoneData'" />
+                    <c.property propertyname="'MemberData/MobileData'" />
+                    <c.property propertyname="'MemberData/EmailData'" />
+                    <c.toolbar>
+                        <c.button text="'Opslaan'" tooltip="'opslaan'">
+                            <onActionPerformed>
+                                <callService input="{navajo:/officialportal/ProcessQueryMember}"
+                                    service="'member/ProcessUpdateKernMember'" />
+                                <setValue from="false" to="{attributeref:/~:visible}" />
+                            </onActionPerformed>
+                        </c.button>
+                    </c.toolbar>
+                    
+                </c.column>
+            </c.row>
+            <!--
+                <c.gridpanel border="{border:/titled-Rollen}" constraint="Center"
+                columnWidth="'600'" id="rolePanel">
+            -->
+            <c.tabs constraint="Center" id="rolePanel">
+                <c.tipi id="rp" constraint="Rollen">
+                    <l.border>
+
+                        <c.tipitable constraint="Center" id="roleTable"
+                            messagepath="'Officials'" service="officialportal/ProcessQueryOfficialFunctions"
+                            rowsPerPage="0">
+                            <column name="OrganizingDistrictName" label="'District'"
+                                editable="false" size="140" />
+                            <column name="OfficialType" label="'Rol'" editable="false"
+                                size="170" />
+                            <column name="Level" label="'Niveau'" editable="false"
+                                size="120" />
+                            <column name="Blocked" label="'Blokkering'" editable="false"
+                                size="120" />
+                            <column name="MaximumTravelDistance" label="'Reisafst.'"
+                                editable="false" size="50" />
+                        </c.tipitable>
+                        <c.toolbar id="toolbar" constraint="South">
+
+                            <c.button id="detailsButton" text="'roldetails'"
+                                tooltip="'details'">
+                                <onActionPerformed>
+                                    <block expression="{attribute:/~/rolePanel/rp/roleTable:selectedIndex} == -1">
+                                        <showInfo text="'Selecteer a.u.b. een rol.'" />
+                                    </block>
+                                    <block expression="{attribute:/~/rolePanel/rp/roleTable:selectedIndex} != -1">
+                                        <callService service="'official/InitUpdateOfficial'" />
+                                        <setValue
+                                            from="{property:/~/rolePanel/rp/roleTable:selectedMessage:OfficialId}"
+                                            to="{propertyref:/official/InitUpdateOfficial:/Official/OfficialId}" />
+                                        <instantiate force="true" id="'roleDetail'" name="'roleDetailWindow'"
+                                            location="{component://init/main}" />
+                                    </block>
+                                </onActionPerformed>
+                            </c.button>
+                        </c.toolbar>
+                    </l.border>
+
+                </c.tipi>
+
+                <c.tipitable constraint="Lidmaatschappen" id="memberTable"
+                    messagepath="'ClubMembership/ClubMemberships'" service="member/ProcessGetClubMemberships"
+                    rowsPerPage="0">
+                    <column name="ClubIdentifier" label="'Clubcode'" editable="false"
+                        size="150" />
+                    <column name="ClubName" label="'Clubnaam'" editable="false"
+                        size="150" />
+                </c.tipitable>
+    
+                                <c.tipitable constraint="Bondsfuncties" id="otherFunctions"
+                                        messagepath="'AssAdminFunctions'" service="member/ProcessQueryAssAdminFunctions"
+                                        rowsPerPage="0">
+                                        <column name="CommitteeName" label="'Commissie'" editable="false"
+                                                size="300" />
+                                        <column name="FunctionName" label="'Functie'" editable="false"
+                                                size="150" />
+                                </c.tipitable>
+
+            </c.tabs>
+
+        </l.border>
+    </d.window>
+</tid>

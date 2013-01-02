@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<tid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" errorhandler="error" xsi:noNamespaceSchemaLocation="tipi.xsd">
+    <d.window closable="true" h="500" name="roleDetailWindow" resizable="true" title="'Rol specifieke gegevens'" movable="true" w="600" x="170" y="50"> 
+    <onInstantiate>
+       <callService input="{navajo:/official/InitUpdateOfficial}" service="'official/ProcessQueryOfficial'" />
+    </onInstantiate> 
+    <l.border>
+            <c.gridpanel constraint="North:170" columnWidth="'175 400'" border="{border:/titled-Rolgegevens}" service="official/ProcessQueryOfficial">
+               <c.label text="'District'"/>
+               <c.property showlabel="false" propertyname="'Officials/OrganizingDistrictName'" />   
+               <c.label text="'Functie'"/>
+               <c.property showlabel="false" propertyname="'Officials/OfficialType'" />   
+               <c.label text="'Niveau'"/>
+               <c.property showlabel="false" propertyname="'Officials/OfficialLevelDescription'" />   
+               <c.label text="'Aanvangsdatum'"/>
+               <c.property showlabel="false" propertyname="'Officials/RegistrationDate'" alwaysUseLabel="true" />   
+               <c.label text="'Blokkering'"/>
+               <c.property showlabel="false" propertyname="'Officials/BlockedInfo'"/>   
+               <c.label text="'Maximale reisafstand'"/>
+               <c.property showlabel="false" propertyname="'Officials/MaximumTravelDistance'" alwaysUseLabel="true" />   
+            </c.gridpanel>
+            <c.gridpanel constraint="Center" columnWidth="'130 150 150 150'" border="{border:/titled-Beschikbaarheid}" service="official/ProcessQueryOfficial">
+               <c.label text="'Zaterdag'"/>
+               <c.property showlabel="false" propertyname="'Officials/AvailableSat'" />   
+               <c.property showlabel="false" propertyname="'Officials/AvailableSatFrom'" />   
+               <c.property showlabel="false" propertyname="'Officials/AvailableSatTo'" />   
+               <c.label text="'Zondag'"/>
+               <c.property showlabel="false" propertyname="'Officials/AvailableSun'" />   
+               <c.property showlabel="false" propertyname="'Officials/AvailableSunFrom'" />   
+               <c.property showlabel="false" propertyname="'Officials/AvailableSunTo'" />   
+               <c.label text="'Maandag'"/>
+               <c.property showlabel="false" propertyname="'Officials/AvailableMon'" />   
+               <c.property showlabel="false" propertyname="'Officials/AvailableMonFrom'" />   
+               <c.property showlabel="false" propertyname="'Officials/AvailableMonTo'" />   
+               <c.label text="'Dinsdag'"/>
+               <c.property showlabel="false" propertyname="'Officials/AvailableTue'" />   
+               <c.property showlabel="false" propertyname="'Officials/AvailableTueFrom'" />   
+               <c.property showlabel="false" propertyname="'Officials/AvailableTueTo'" />   
+               <c.label text="'Woensdag'"/>
+               <c.property showlabel="false" propertyname="'Officials/AvailableWed'" />   
+               <c.property showlabel="false" propertyname="'Officials/AvailableWedFrom'" />   
+               <c.property showlabel="false" propertyname="'Officials/AvailableWedTo'" />   
+               <c.label text="'Donderdag'"/>
+               <c.property showlabel="false" propertyname="'Officials/AvailableThu'" />   
+               <c.property showlabel="false" propertyname="'Officials/AvailableThuFrom'" />   
+               <c.property showlabel="false" propertyname="'Officials/AvailableThuTo'" />   
+               <c.label text="'Vrijdag'"/>
+               <c.property showlabel="false" propertyname="'Officials/AvailableFri'" />   
+               <c.property showlabel="false" propertyname="'Officials/AvailableFriFrom'" />   
+               <c.property showlabel="false" propertyname="'Officials/AvailableFriTo'" />   
+            </c.gridpanel>
+        </l.border>
+    </d.window>
+</tid>

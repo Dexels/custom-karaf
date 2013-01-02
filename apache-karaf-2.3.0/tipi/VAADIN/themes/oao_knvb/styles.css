@@ -1,0 +1,291 @@
+@import "../base/styles.css";
+@import "../chameleon/styles.css";
+@import "../oao/styles_generated.css";
+@import "../oao/styles.css";
+
+/** 
+ * "optional-" prefix means that the style is not necessarily used, it can be left blank
+ * "generated-" prefix means that the style is calculated from some other color, and not directly selected by the editor user
+ *
+ **/
+
+/* Application background */
+.v-app {
+	
+	background: url('logo-knvb.png') no-repeat center center;
+	background-color: #E7E7E8;
+	filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0,StartColorStr=white,EndColorStr=#E7E7E8);
+	background-image: -moz-linear-gradient(top,white,#E7E7E8 100%);
+	background-image: -ms-linear-gradient(top,white,#E7E7E8 100%);
+	background-image: -o-linear-gradient(top,white,#E7E7E8 100%);
+	background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0,white),color-stop(100%,#E7E7E8));
+	background-image: -webkit-linear-gradient(top,white,#E7E7E8 100%);
+	background-image: linear-gradient(to bottom,white,#E7E7E8 100%);
+}
+
+
+
+/* Login Picture */
+.v-caption-loginpicture {
+	width: 120px !important;
+	height: 120px !important;
+	background: url('logosmall-knvb.png') no-repeat center center;
+}
+
+
+.mainLogo {
+	width: 120px !important;
+	height: 120px !important;
+	background: url('logosmall-knvb.png') no-repeat center center;
+	position: absolute;
+	top: 40px;
+	right: 0px;
+	z-index: 10000;
+}
+.v-caption-mainTitle .v-captiontext {
+	position: absolute;
+	bottom: 40px;
+	left: 0px;
+	z-index: 100;
+	font-family: Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	font-size: 30px !important;
+	color: #DEDFE1 !important;
+	text-transform: uppercase;
+	overflow: hidden;
+	text-align: center;
+	width: 100%;
+}
+
+
+
+
+
+
+
+
+/* COLOR PALLET
+
+#8A8B8A - Gray
+#F5561F - Orange
+
+----------------------------------------------------------------------------------------------------*/
+
+/* GENERIC GRADIENT
+----------------------------------------------------------------------------------------------------*/
+body {
+	overflow: hidden;
+}
+
+
+.v-window-wrap,
+.v-window,
+.v-popupview-popup,
+.v-filterselect-suggestpopup,
+.v-datefield-popup,
+.v-contextmenu,
+.v-Notification,
+.v-menubar-submenu,
+.v-menubar {
+	filter: none;
+	background-image: none;
+	background-color: white;
+	
+	-moz-box-shadow: inset 0 1px 0 rgba(255,255,255,.45);
+	-ms-box-shadow: inset 0 1px 0 rgba(255,255,255,.45);
+	-o-box-shadow: inset 0 1px 0 rgba(255,255,255,.45);
+	-webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.45);
+	box-shadow: inset 0 1px 0 rgba(255,255,255,.45);
+	}
+
+/* GENERIC GRAY GRADIENT
+----------------------------------------------------------------------------------------------------*/	
+.v-tabsheet-tabitem-selected,
+.v-button,
+.v-disabled.v-button:focus,
+.v-disabled.v-button:active {	
+	filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0,StartColorStr=#ffffff,EndColorStr=#e0e0e0);
+	background-image: -moz-linear-gradient(top,#fff 0,#e0e0e0 100%);
+	background-image: -ms-linear-gradient(top,#fff 0,#e0e0e0 100%);
+	background-image: -o-linear-gradient(top,#fff 0,#e0e0e0 100%);
+	background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0,#fff),color-stop(100%,#e0e0e0));
+	background-image: -webkit-linear-gradient(top,#fff 0,#e0e0e0 100%);
+	background-image: linear-gradient(to bottom,#fff 0,#e0e0e0 100%);
+	}
+
+/* NAVIGATION
+----------------------------------------------------------------------------------------------------*/
+.v-menubar {
+	border-top: 3px solid #8A8B8A;
+	border-bottom: 1px solid #8A8B8A;
+	}
+.v-menubar .v-menubar-menuitem {
+	color: black;
+	border-left: none;
+	border-right: 1px solid #8A8B8A;
+	}	
+.v-menubar-menuitem-caption {
+	text-shadow: none;
+}
+.v-window,
+.v-popupview-popup,
+.v-filterselect-suggestpopup,
+.v-datefield-popup,
+.v-contextmenu,
+.v-Notification,
+.v-menubar-submenu {
+	border: 1px solid #8A8B8A;
+	}
+.v-menubar-submenu .v-menubar-menuitem {
+	color: black;
+	}
+.v-filterselect-prevpage-off:hover,
+.v-filterselect-nextpage:hover,
+.gwt-MenuItem-selected,
+.v-menubar-menuitem-selected {
+	background: #8A8B8A !important;
+	}
+.v-filterselect-prevpage-off,
+.v-filterselect-nextpage {
+	background: #304ea6;
+	border-top: 1px solid #8A8B8A;
+	border-bottom: 1px solid #8A8B8A;
+}
+.v-filterselect-status {
+	color: black;
+}
+
+.v-menubar-menuitem-selected .v-menubar-menuitem-caption {
+	color: white;
+}
+	
+
+/* BUTTONS
+----------------------------------------------------------------------------------------------------*/
+.v-button,
+.v-disabled.v-button:focus,
+.v-disabled.v-button:active {
+	border: 1px solid black;
+	-webkit-box-shadow: 0 1px 0 rgba(255,255,255,.2);
+	-moz-box-shadow: 0 1px 0 rgba(255,255,255,.2);
+	text-shadow: none;
+	color: #555;
+	}
+.v-button:hover,
+.v-disabled.v-button:focus:hover,
+.v-disabled.v-button:active:hover {
+	color: black;
+}
+.v-button-link:hover {
+	color: #6891e7;
+}
+	
+/* WINDOW HEADER
+----------------------------------------------------------------------------------------------------*/
+.v-window,
+.v-menubar-submenu {
+	border: 1px solid #8A8B8A !important;
+}
+.v-window-outerheader {
+	background-color: #8A8B8A;
+	}
+.v-table-caption-container,
+.v-table-header-drag {
+	color: white;
+}
+div.v-window-header {
+	color: white;
+	text-shadow: 1px 1px 1px black;
+}
+
+/* TABLES
+----------------------------------------------------------------------------------------------------*/	
+.v-table-header-wrap,
+.v-table-header-drag {
+	background: #8A8B8A;
+	border-color: black;
+	height: 24px;
+	}
+.v-contextmenu td.gwt-MenuItem-selected div, 
+.v-filterselect-suggestpopup td.gwt-MenuItem-selected, 
+.v-table .v-table-body .v-selected, .v-menubar-submenu span.v-menubar-menuitem-selected {
+	background: #BBB;
+}
+.v-table-cell-content {
+	border-top: 1px solid #fff;
+}
+.v-tabsheet-tabitem-selected {
+	border: 1px solid black;
+}
+.v-tabsheet-tabitem-selected .v-caption .v-captiontext {
+	color: #555 !important;
+	text-shadow: none;
+}
+.v-table-caption-container {
+	text-shadow: none;
+}
+.v-table-row v-selected {
+	
+}
+.v-table-resizer {
+	float: right;
+}
+
+/* TITLES
+----------------------------------------------------------------------------------------------------*/
+.v-caption-titled .v-captiontext {
+	color: black;
+	text-shadow: none;
+}
+/* TEXT
+----------------------------------------------------------------------------------------------------*/
+.v-disabled {
+	color: black !important;
+}
+.v-app, 
+.v-window, 
+.v-popupview-popup, 
+.v-label, 
+.v-caption,
+.v-caption .v-captiontext {
+color: black;
+}
+
+.gwt-MenuItem span{
+	color: black !important;
+}
+
+/* LINKS
+----------------------------------------------------------------------------------------------------*/
+
+.v-button-link {
+	color: black;
+}
+.v-button-link:hover {
+	color: #ACC2F1;
+}
+
+/* ORANGE LINE
+----------------------------------------------------------------------------------------------------*/
+
+.lineLabel {
+	background: #F5561F;
+	width: 100%;
+	height: 30px;
+	position: absolute;
+	bottom: 100px;
+	z-index: 10000;
+	overflow: hidden;
+	}
+
+div.question-header input {
+	font-size: 16px;
+}
+
+/* Dirty as a muddy swine: Show all floats in different color and size               */
+/* As no proper id can be set now we need to address to only float field by its type */
+/* The proper fix has been added to the todo-list                                    */
+.v-textfield-tipi-property-type-float {
+        color: blue !important;
+	font-size: 18px !important;
+}

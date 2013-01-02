@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" errorhandler="error" xsi:noNamespaceSchemaLocation="tipi.xsd">
+    <d.window h="620" w="1020" x="10" y="10" name="clubWindow" title="'Detailgegevens club'" visible="true" >
+        <onInstantiate>
+            <injectNavajo service="'external/addressbook/ProcessQueryClub'" navajo="{navajo:/external/addressbook/ProcessQueryClub}"/>
+        </onInstantiate>
+        <onWindowClosed>
+            <dispose path="{component:/~}" />
+        </onWindowClosed>
+        <l.border>
+            <c.gridpanel id="clubPanel" constraint="North:200" service="external/addressbook/ProcessQueryClub" columnWidth="'310 370 310'" >
+                <onLoad>
+                    <label.attribute path="{component:/./panel1/correspondenceClubName}" text="{property:/external/addressbook/ProcessQueryClub:/ClubData/ClubName}"/>
+                    <label.attribute path="{component:/./panel1/correspondenceStreetAndNumber}" text="{property:/external/addressbook/ProcessQueryClub:/Data/CorrespondenceStreetAndNumber}"/>
+                    <label.attribute path="{component:/./panel1/correspondenceZipCodeAndCity}" text="{property:/external/addressbook/ProcessQueryClub:/Data/CorrespondenceZipCodeAndCity}"/>
+                    <label.attribute path="{component:/./panel1/correspondenceTelephoneNumber}" text="{property:/external/addressbook/ProcessQueryClub:/Data/CorrespondenceTelephoneNumber}"/>
+                    <label.attribute path="{component:/./panel1/correspondenceEmail}" text="{property:/external/addressbook/ProcessQueryClub:/Data/CorrespondenceEmail}"/>
+
+                    <label.attribute path="{component:/./panel2/facilityName}" text="{property:/external/addressbook/ProcessQueryClub:/Data/FacilityName}"/>
+                    <label.attribute path="{component:/./panel2/facilityStreetAndNumber}" text="{property:/external/addressbook/ProcessQueryClub:/Data/FacilityStreetAndNumber}"/>
+                    <label.attribute path="{component:/./panel2/facilityZipCodeAndCity}" text="{property:/external/addressbook/ProcessQueryClub:/Data/FacilityZipCodeAndCity}"/>
+                    <label.attribute path="{component:/./panel2/facilityTelephoneNumber}" text="{property:/external/addressbook/ProcessQueryClub:/Data/FacilityTelephoneNumber}"/>
+
+                    <label.attribute path="{component:/./panel3/establishedDate}" text="FormatDate({property:/external/addressbook/ProcessQueryClub:/ClubData/EstablishedDate},'d MMMMM yyyy','nl')"/>
+                    <label.attribute path="{component:/./panel3/shirt}" text="{property:/external/addressbook/ProcessQueryClub:/ClubData/HomeShirtColors}"/>
+                    <label.attribute path="{component:/./panel3/shorts}" text="{property:/external/addressbook/ProcessQueryClub:/ClubData/HomeShortsColors}"/>
+                    <label.attribute path="{component:/./panel3/stocking}" text="{property:/external/addressbook/ProcessQueryClub:/ClubData/HomeStockingColors}"/>
+
+                </onLoad>
+                <c.panel id="panel1" border="CreateTitledBorder('Correspondentieadres')">
+                    <l.verticalbox>
+                        <c.label id="correspondenceClubName" text="''" font="{font:/Verdana-12-1}" />
+                        <c.label id="correspondenceStreetAndNumber" text="''" font="{font:/Verdana-12-1}" />
+                        <c.label id="correspondenceZipCodeAndCity" text="''" font="{font:/Verdana-12-1}" />
+                        <c.label id="correspondenceTelephoneNumber" text="''" font="{font:/Verdana-12-1}" />
+                        <c.label id="correspondenceEmail" text="''" font="{font:/Verdana-12-1}" />
+                    </l.verticalbox>
+                </c.panel>
+                <c.gridpanel id="panel2" border="CreateTitledBorder('Accommodatie')" columnWidth="'290 80'">
+                    <c.label id="facilityName" text="''" font="{font:/Verdana-12-1}" />
+                    <c.button id="consulButton" tooltip="'Consul(s)'" borderVisible="false" text="'Consul'" >
+                        <onActionPerformed>
+                            <instantiate force="true" id="'addressBookConsulsDialog'" name="'addressBookConsulsDialog'" location="{component://init/main}" />
+                        </onActionPerformed>
+                    </c.button>
+                    <c.label id="facilityStreetAndNumber" text="''" font="{font:/Verdana-12-1}" />
+                    <c.hidden/>
+                    <c.label id="facilityZipCodeAndCity" text="''" font="{font:/Verdana-12-1}" />
+                    <c.hidden/>
+                    <c.label id="facilityTelephoneNumber" text="''" font="{font:/Verdana-12-1}" />
+                </c.gridpanel>
+                <c.gridpanel id="panel3" border="CreateTitledBorder('Algemeen')" columnWidth="'160 180'">
+                    <c.label id="establishedDateLabel" text="'Opgericht'" />
+                    <c.label id="establishedDate" text="''" font="{font:/Verdana-12-1}" />
+                    <c.label id="shirtLabel" text="'Shirt'" />
+                    <c.label id="shirt" text="''" font="{font:/Verdana-12-1}" />
+                    <c.label id="shortsLabel" text="'Broek'" />
+                    <c.label id="shorts" text="''" font="{font:/Verdana-12-1}" />
+                    <c.label id="stockingLabel" text="'Kousen'" />
+                    <c.label id="stocking" text="''" font="{font:/Verdana-12-1}" />
+                </c.gridpanel>
+
+            </c.gridpanel>
+            <c.tipitable ignoreList="{'Mobile','OrderKey'}" id="table" constraint="Center" messagepath="'/ClubOfficials'" border="CreateTitledBorder('Verenigingsfunctionarissen')" service="external/addressbook/ProcessQueryClub" >
+                <column editable="false" name="FullName" label="'Naam'" size="170" />
+                <column editable="false" name="PersonId" label="'Relatiecode'" size="80" />
+                <column editable="false" name="Telephone" label="'Telefoonnr'" size="80" />
+                <column editable="false" name="Email" label="'E-mail'" size="190" />
+                <column editable="false" name="FunctionDescription" label="'Functie'" size="160" />
+                <column editable="false" name="RoleDescription" label="'Bond/Ver'" size="120" />
+            </c.tipitable>
+        </l.border>
+    </d.window>
+</tid>

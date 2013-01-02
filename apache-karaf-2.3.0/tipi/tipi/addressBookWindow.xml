@@ -1,0 +1,379 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<tid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" errorhandler="error" xsi:noNamespaceSchemaLocation="tipi.xsd">
+    <d.window h="620" w="1020" x="10" y="10" name="addressBookWindow" title="'Adresboek - Digitale contactgegevens'" >
+        <onInstantiate>
+            <window.toFront path="{component:/~}"/>
+            <callService service="'external/addressbook/InitSearchFacilities'"/>
+            <callService service="'external/addressbook/InitSearchUnionOfficials'"/>
+            <callService service="'external/addressbook/InitSearchOfficials'"/>
+            <callService service="'external/addressbook/InitSearchClubOfficials'"/>
+            <callService service="'external/addressbook/InitSearchClubs'"/>
+            <callService service="'vla/tools/InitSearchKey'"/>
+	    <callService service="'external/competition/InitCompetitionData'"/>
+            <instantiate name="'selectOrganizationDialog'" id="'selectOrganizationDialog'" location="{component://init/main}" />
+        </onInstantiate>
+        <l.border>
+            <c.tabs id="tabs" constraint="Center">
+                <c.tab id="tab1" constraint="Accommodaties" >
+                    <l.border>
+                        <c.gridpanel id="searchPanel" constraint="North:80" border="CreateTitledBorder('Zoek')" service="external/addressbook/InitSearchFacilities" columnWidth="'290 290 290 80'" >
+                            <onLoad>
+                                <tabs.attribute path="{component:/~/tabs}" selectedindex="0"/>
+                                <button.attribute path="{component:/./searchButton}" enabled="true"/>
+                            </onLoad>
+                            <c.property propertyname="'/FacilitySearch/RegionCode'" label_indent="60" />
+                            <c.property propertyname="'/FacilitySearch/FacilityName'" label_indent="40" />
+                            <c.property propertyname="'/FacilitySearch/City'" label_indent="70" />
+                            <c.button borderVisible="false" enabled="false" id="searchButton" tooltip="'Zoek'" text="'Zoek'">
+                                <onActionPerformed>
+                                    <callService service="'external/addressbook/ProcessSearchFacilities'" input="{navajo:/external/addressbook/InitSearchFacilities}"/>
+                                </onActionPerformed>
+                            </c.button>
+                            <c.hidden />
+                            <c.property propertyname="'/FacilitySearch/FacilityType'" label_indent="40" />
+                            <c.property propertyname="'/FacilitySearch/Community'" label_indent="70" />
+                            <c.button borderVisible="false" enabled="true" id="resetButton" tooltip="'Reset'" text="'Reset'">
+                                <onActionPerformed>
+                                    <callService service="'external/addressbook/InitSearchFacilities'"/>
+                                </onActionPerformed>
+                            </c.button>
+                        </c.gridpanel>
+                        <c.tipitable filtersvisible="false" headervisible="false" ignoreList="{'Address','OrganizationId','ParentOrganizationId','FacilityType','FacilityId','Identification of the organization','FacilityClub'}" id="table" constraint="Center" service="external/addressbook/ProcessSearchFacilities" messagepath="'/Facility'" border="CreateTitledBorder('Accommodaties')"  >
+                            <column editable="false" name="FacilityName" label="'Accommodatienaam'" size="180" />
+                            <column editable="false" name="FacilityTypeName" label="'Type'" size="80" />
+                            <column editable="false" name="FacilityStreetname" label="'Straat'" size="120" />
+                            <column editable="false" name="FacilityAddressNumber" label="'Huisnr.'" size="40" />
+                            <column editable="false" name="FacilityAddressNumberAppendix" label="'Toev.'" size="40" />
+                            <column editable="false" name="FacilityZipCode" label="'Postcode'" size="60" />
+                            <column editable="false" name="FacilityCity" label="'Plaats'" size="110" />
+                            <column editable="false" name="FacilityCommunity" label="'Gemeente'" size="120" />
+                            <column editable="false" name="FacilityTelephoneData" label="'Telefoon'" size="80" />
+                            <column editable="false" name="ParentName" label="'District'" size="120" />
+                        </c.tipitable>
+                        <c.gridpanel constraint="South" id="toolbar" columnWidth="'290 290 290 80'" border="CreateTitledBorder('')">
+                            <c.label text="' '"/>
+                            <c.label text="' '"/>
+                            <c.label text="' '"/>
+                            <c.button id="routeplannerBtn" text="''" tooltip="'open routeplanner'" enabled="true" borderVisible="false" text="'Route'">
+                                <onActionPerformed>
+                                    <block condition="{attribute:/~/tabs/tab1/table:selectedIndex} == -1" >
+                                        <showInfo text="'Selecteer een rij'"/>
+                                    </block>
+                                    <block condition="{attribute:/~/tabs/tab1/table:selectedIndex} != -1" >
+                                        <openBrowser url="'http://www.sportlink.com/routeplanner.html?slc=1&amp;sport=' + {system:/navajo.globals.DefaultSport} + '&amp;objecttype=accommodation&amp;objectid=' + {property:/~/tabs/tab1/table:selectedMessage:FacilityId}" newWindow="false" />
+                                    </block>
+                                </onActionPerformed>
+                            </c.button>
+                        </c.gridpanel>
+                    </l.border>
+                </c.tab>
+                <c.tab id="tab2" constraint="Bondsorganen">
+                    <l.border>
+                        <c.gridpanel id="searchPanel" constraint="North:80" border="CreateTitledBorder('Zoek')" service="external/addressbook/InitSearchUnionOfficials" columnWidth="'290 290 290 80'">
+                            <onLoad>
+                                <button.attribute path="{component:/./searchButton}" enabled="true"/>
+                            </onLoad>
+                            <c.property propertyname="'/SearchCriteria/DistrictId'" label_indent="60" >
+                                <onValueChanged>
+                                    <callService service="'external/addressbook/InitSearchUnionOfficials'" input="{navajo:/external/addressbook/InitSearchUnionOfficials}"/>
+                                </onValueChanged>
+                            </c.property>
+                            <c.property propertyname="'/SearchCriteria/OrganizationId'" label_indent="80" />
+                            <c.property propertyname="'/SearchCriteria/Lastname'" label_indent="80" />
+                            <c.button borderVisible="false" enabled="false" id="searchButton" tooltip="'Zoek'" text="'Zoek'">
+                                <onActionPerformed>
+                                    <callService service="'external/addressbook/ProcessSearchUnionOfficials'" input="{navajo:/external/addressbook/InitSearchUnionOfficials}"/>
+                                </onActionPerformed>
+                            </c.button>
+                            <c.hidden />
+                            <c.property propertyname="'/SearchCriteria/OrganizationId'" label_indent="40" visible="false" />
+                            <c.hidden />
+                            <c.button borderVisible="false" enabled="true" id="resetButton" tooltip="'Reset zoekvelden'" text="'Reset'">
+                                <onActionPerformed>
+                                    <callService service="'external/addressbook/InitSearchUnionOfficials'"/>
+                                </onActionPerformed>
+                            </c.button>
+                        </c.gridpanel>
+                        <c.tipitable ignoreList="{'Mobile'}" id="table" constraint="Center" service="external/addressbook/ProcessSearchUnionOfficials" messagepath="'/Officials'" border="CreateTitledBorder('Bondsofficials/functionarissen')" columnsvisible="true" columnDefinitionSavePath="{global:/UserName} + '|columns_addressbookwindow_searchresultsunionofficials'" >
+                            <column editable="false" name="FullName" label="'Naam'" size="140" />
+                            <column editable="false" name="PersonId" label="'Relatiecode'" size="90" />
+                            <column editable="false" name="DistrictName" label="'District'" size="120" />
+                            <column editable="false" name="Telephone" label="'Telefoon'" size="90" />
+                            <column editable="false" name="Email" label="'E-mail'" size="160" />
+                            <column editable="false" name="OfficialDescription" label="'Type'" size="150" />
+                            <column editable="false" name="FunctionDescription" label="'Functie'" size="120" />
+                        </c.tipitable>
+                        <c.gridpanel constraint="South" id="toolbar" columnWidth="'290 290 290 80'" border="CreateTitledBorder('')">
+                            <c.label text="' '"/>
+                            <c.label text="' '"/>
+                            <c.label text="' '"/>
+                            <c.button id="emailButton" text="''" tooltip="'E-mail'" enabled="true" borderVisible="false" text="'E-mail'">
+                                <onActionPerformed>
+                                    <block condition="{attribute:/~/tabs/tab2/table:selectedIndex} == -1" >
+                                        <showInfo text="'Selecteer een rij'"/>
+                                    </block>
+                                    <block condition="{attribute:/~/tabs/tab2/table:selectedIndex} != -1" >
+                                        <openBrowser url="'mailto:'+{property:/~/tabs/tab2/table:selectedMessage:Email}" newWindow="false" />
+                                    </block>
+                                </onActionPerformed>
+                            </c.button>
+                        </c.gridpanel>
+                    </l.border>
+                </c.tab>
+                <c.tab id="tab3" constraint="Officials">
+                    <l.border>
+                        <c.gridpanel id="searchPanel" constraint="North:80" border="CreateTitledBorder('Zoek')" service="external/addressbook/InitSearchOfficials" columnWidth="'290 290 290 80'" >
+                            <onLoad>
+                                <button.attribute path="{component:/./searchButton}" enabled="true"/>
+                            </onLoad>
+                            <c.property propertyname="'/SearchCriteria/DistrictId'" label_indent="60" >
+                                <onValueChanged>
+                                    <callService service="'external/addressbook/InitSearchOfficials'" input="{navajo:/external/addressbook/InitSearchOfficials}"/>
+                                </onValueChanged>
+                            </c.property>
+                            <c.property propertyname="'/SearchCriteria/OfficialSearchType'" label_indent="70" >
+                                <onValueChanged>
+                                    <callService service="'external/addressbook/InitSearchOfficials'" input="{navajo:/external/addressbook/InitSearchOfficials}"/>
+                                </onValueChanged>
+                            </c.property>
+                            <c.property propertyname="'/SearchCriteria/Lastname'" label_indent="90" />
+                            <c.button  borderVisible="false" enabled="false" id="searchButton" tooltip="'Zoek'" text="'Zoek'">
+                                <onActionPerformed>
+                                    <callService service="'external/addressbook/ProcessSearchOfficials'" input="{navajo:/external/addressbook/InitSearchOfficials}"/>
+                                </onActionPerformed>
+                            </c.button>
+                            <c.hidden />
+                            <c.property propertyname="'/SearchCriteria/FunctionId'" label_indent="70" />
+                            <c.hidden />
+                            <c.button borderVisible="false" enabled="true" id="resetButton" tooltip="'Reset zoekvelden'" text="'Reset'">
+                                <onActionPerformed>
+                                    <callService service="'external/addressbook/InitSearchOfficials'"/>
+                                </onActionPerformed>
+                            </c.button>
+                        </c.gridpanel>
+                        <c.tipitable ignoreList="{'Mobile'}" id="table" constraint="Center" service="external/addressbook/ProcessSearchOfficials" messagepath="'/Officials'" border="CreateTitledBorder('Officials')" columnsvisible="true" columnDefinitionSavePath="{global:/UserName} + '|columns_addressbookwindow_searchresultsofficials'" >
+                            <column editable="false" name="FullName" label="'Naam'" size="120" />
+                            <column editable="false" name="PersonId" label="'Relatiecode'" size="80" />
+                            <column editable="false" name="DistrictName" label="'District'" size="120" />
+                            <column editable="false" name="Telephone" label="'Telefoon'" size="80" />
+                            <column editable="false" name="Email" label="'E-mail'" size="160" />
+                            <column editable="false" name="OfficialSearchType" label="'Soort'" size="130" />
+                            <column editable="false" name="OfficialDescription" label="'Type'" size="150" />
+                            <column editable="false" name="SportDescription" label="'Speltype'" size="120" />
+                            <column editable="false" name="OfficialLevel" label="'Niveau'" size="120" />
+                        </c.tipitable>
+                        <c.gridpanel constraint="South" id="toolbar" columnWidth="'290 290 80 290'" border="CreateTitledBorder('')">
+                            <c.label text="' '"/>
+                            <c.label text="' '"/>                        
+                            <c.button id="emailButton" text="''" tooltip="'E-mail'" enabled="true" borderVisible="false" text="'E-mail'">
+                                <onActionPerformed>
+                                    <block condition="{attribute:/~/tabs/tab3/table:selectedIndex} == -1" >
+                                        <showInfo text="'Selecteer een rij'"/>
+                                    </block>
+                                    <block condition="{attribute:/~/tabs/tab3/table:selectedIndex} != -1" >
+                                        <openBrowser url="'mailto:'+{property:/~/tabs/tab3/table:selectedMessage:Email}" newWindow="false" />
+                                    </block>
+                                </onActionPerformed>
+                            </c.button>
+	                    <c.button text="'Aanstellingen'" tooltip="'Vraag aanstellingen op'">
+                                <onActionPerformed>
+                                    <block expression="{attribute:/../../table:selectedIndex}!=-1">
+                                        <callService service="'officialportal/InitQueryActivities'" />
+                                        <setValue from="true" to="{propertyref:/officialportal/InitQueryActivities:/PersonActivities/ShowPreviousSeason}" />
+                                        <setValue from="{property:/officialportal/ProcessLogin:/UserData/UserName}" to="{propertyref:/officialportal/InitQueryActivities:/PersonActivities/CallerPersonId}" />
+                                        <setValue from="true" to="{propertyref:/officialportal/InitQueryActivities:/PersonActivities/IgnoreConcept}" />
+                                        <setValue from="GetPropertyValue({attribute:/../../table:selectedMessage},'PersonId')" to="{propertyref:/officialportal/InitQueryActivities:/PersonActivities/PersonId}" />
+                                        <instantiate force="true" id="'otherOfficialActivities'" name="'otherPersonActivityList'" location="{component://init/main}" />
+                                        <setValue to="{attributeref://init/main/otherOfficialActivities:title}" from="'Aanstellingen van ' + GetPropertyValue({attribute:/../../table:selectedMessage},'FullName')"/>
+                                        <callService input="{navajo:/officialportal/InitQueryActivities}" service="'officialportal/ProcessQueryActivities'" />
+                                    </block>
+                                    <block expression="{attribute:/../../table:selectedIndex}==-1">
+                                        <showError text="'Selecteer a.u.b eerst een official!'"/>
+                                    </block>
+                                </onActionPerformed>
+                            </c.button>
+                        </c.gridpanel>
+                    </l.border>
+                </c.tab>
+                <c.tab id="tab4" constraint="Verenigingsfunctionarissen" >
+                    <l.border>
+                        <c.gridpanel id="searchPanel" constraint="North:80" border="CreateTitledBorder('Zoek')" service="external/addressbook/InitSearchClubOfficials" columnWidth="'270 270 50 280 80'">
+                            <onLoad>
+                                <button.attribute path="{component:/./searchButton}" enabled="true"/>
+                            </onLoad>
+                            <c.property propertyname="'/SearchCriteria/DistrictId'" label_indent="60" />
+                            <c.property propertyname="'/SearchCriteria/OrganizationName'" label_indent="70" />
+			    <c.button id="searchOrganizationButton" text="''" tooltip="'Zoek vereniging'" icon="{resource:/icons/24/view.png}">
+				<onActionPerformed>
+    				    <block condition="Size({property:/external/addressbook/InitSearchClubOfficials://SearchCriteria/OrganizationName}) &lt; 2 AND Size({property:/external/addressbook/InitSearchClubOfficials://SearchCriteria/OrganizationName}) &gt; 0" >
+                                            <showInfo text="'Vul minimaal 2 tekens in.'"/>
+                                        </block>
+                                        <block condition="{global:/searchKey} != {property:/external/addressbook/InitSearchClubOfficials:/SearchCriteria/OrganizationName} AND Size({property:/external/addressbook/InitSearchClubOfficials://SearchCriteria/OrganizationName}) &gt;= 2">                                            
+                                            <set value="{property:/external/addressbook/InitSearchClubOfficials:/SearchCriteria/OrganizationName}" element="{propertyref:/vla/tools/InitSearchKey:/SearchCriteria/Key}" />
+                                            <set value="GetSelectedValue( {property:/external/addressbook/InitSearchClubOfficials:/SearchCriteria/DistrictId} )" element="{propertyref:/vla/tools/InitSearchKey:/SearchCriteria/DistrictId}" />
+                                            <callService input="{navajo:/vla/tools/InitSearchKey}" service="'vla/tools/ProcessSelectOrganization'" />
+                                            <block condition="{property:/vla/tools/ProcessSelectOrganization:/OrganizationsFound/Count} == 1">
+                                                <set value="{property:/vla/tools/ProcessSelectOrganization:/Organization/OrganizationId}" element="{propertyref:/external/addressbook/InitSearchClubOfficials:/SearchCriteria/OrganizationId}" />
+                                                <set value="{property:/vla/tools/ProcessSelectOrganization:/Organization/OrganizationIdAndName}" element="{propertyref:/external/addressbook/InitSearchClubOfficials:/SearchCriteria/OrganizationName}" />
+                                                <set value="{property:/vla/tools/ProcessSelectOrganization:/Organization/OrganizationIdAndName}" element="{globalref:/searchKey}" />
+                                                <callService service="'external/addressbook/InitSearchClubOfficials'" input="{navajo:/external/addressbook/InitSearchClubOfficials}"/>                                                
+                                            </block>
+                                            <block condition="{property:/vla/tools/ProcessSelectOrganization:/OrganizationsFound/Count} &gt; 1">
+                                                <set value="{propertyref:/external/addressbook/InitSearchClubOfficials:/SearchCriteria/OrganizationId}" element="{globalref:/searchResultId}" />
+                                                <set value="{propertyref:/external/addressbook/InitSearchClubOfficials:/SearchCriteria/OrganizationName}" element="{globalref:/searchResultName}" />
+                                                <setValue to="{globalref:/sourceWindow}" from="'addressBookWindow'"/>
+                                                <dialog.show path="{component://init/main/selectOrganizationDialog}" />                                                
+                                            </block>
+                                            <block condition="{property:/vla/tools/ProcessSelectOrganization:/OrganizationsFound/Count} == 0">
+                                                <showInfo text="'Niets gevonden'" />
+                                            </block>                                            
+                                        </block>                    
+				</onActionPerformed>
+			    </c.button>
+                            <c.property propertyname="'/SearchCriteria/Lastname'" label_indent="100" />
+                            <c.button borderVisible="false" enabled="false" id="searchButton" tooltip="'Zoek'" text="'Zoek'">
+                                <onActionPerformed>
+                                        <callService service="'external/addressbook/InitSearchClubOfficials'" input="{navajo:/external/addressbook/InitSearchClubOfficials}"/>
+                                        <callService service="'external/addressbook/ProcessSearchClubOfficials'" input="{navajo:/external/addressbook/InitSearchClubOfficials}"/>
+                                </onActionPerformed>
+                            </c.button>
+                            <c.hidden />
+                            <c.hidden />
+			    <c.hidden />
+                            <c.property propertyname="'/SearchCriteria/FunctionId'" label_indent="100" />
+                            <c.button borderVisible="false" enabled="true" id="resetButton" tooltip="'Reset zoekvelden'" text="'Reset'">
+                                <onActionPerformed>
+                                    <callService service="'external/addressbook/InitSearchClubOfficials'"/>
+                                </onActionPerformed>
+                            </c.button>
+                        </c.gridpanel>
+                        <c.tipitable ignoreList="{'Mobile','OrderKey'}" id="table" constraint="Center" service="external/addressbook/ProcessSearchClubOfficials" messagepath="'/ClubOfficials'" border="CreateTitledBorder('Verenigingsfunctionarissen')" columnsvisible="true" columnDefinitionSavePath="{global:/UserName} + '|columns_addressbookwindow_searchresultsclubofficials'" >
+                            <onLoad>
+                                <button.attribute path="{component:/../toolbar/exportButton}" enabled="{attribute:/.:rowCount} &gt; 0" />
+                            </onLoad>
+                            <column editable="false" name="FullName" label="'Naam'" size="120" />
+                            <column editable="false" name="PersonId" label="'Relatiecode'" size="80" />
+                            <column editable="false" name="ClubName" label="'Vereniging'" size="120" />
+                            <column editable="false" name="DistrictName" label="'District'" size="120" />
+                            <column editable="false" name="Telephone" label="'Telefoon'" size="80" />
+                            <column editable="false" name="Email" label="'E-mail'" size="160" />
+                            <column editable="false" name="FunctionDescription" label="'Functie'" size="160" />
+                            <column editable="false" name="RoleDescription" label="'Bond/Ver'" size="120" />
+                        </c.tipitable>
+                    </l.border>
+                </c.tab>
+                <c.tab id="tab5" constraint="Verenigingen">
+                    <l.border>
+                        <c.gridpanel id="searchPanel" constraint="North:80" border="CreateTitledBorder('Zoek')" service="external/addressbook/InitSearchClubs" columnWidth="'270 270 50 280 80'">
+                            <onLoad>
+                                <button.attribute path="{component:/./searchButton}" enabled="true"/>
+                            </onLoad>
+                            <c.property propertyname="'/ClubSearch/DistrictId'" label_indent="60" />
+                            <c.property propertyname="'/ClubSearch/ClubName'" label_indent="80" />
+		            <c.button id="searchOrganizationButton" text="''" tooltip="'Zoek vereniging'" icon="{resource:/icons/24/view.png}">
+                               <onActionPerformed>
+                                   <block condition="Size({property:/external/addressbook/InitSearchClubs:/ClubSearch/ClubName}) &lt; 2 AND Size({property:/external/addressbook/InitSearchClubs:/ClubSearch/ClubName}) &gt; 0" >
+                                       <showInfo text="'Vul minimaal 2 tekens in.'"/>
+                                   </block>
+                                   <block condition="Size({property:/external/addressbook/InitSearchClubs:/ClubSearch/ClubName}) &gt;= 2">
+                                       <set value="{property:/external/addressbook/InitSearchClubs:/ClubSearch/ClubName}" element="{propertyref:/vla/tools/InitSearchKey:/SearchCriteria/Key}" />
+                                       <set value="GetSelectedValue( {property:/external/addressbook/InitSearchClubs:/ClubSearch/DistrictId} )" element="{propertyref:/vla/tools/InitSearchKey:/SearchCriteria/DistrictId}" />
+                                       <callService input="{navajo:/vla/tools/InitSearchKey}" service="'vla/tools/ProcessSelectOrganization'" />
+                                       <block condition="{property:/vla/tools/ProcessSelectOrganization:/OrganizationsFound/Count} == 1">
+                                           <set value="{property:/vla/tools/ProcessSelectOrganization:/Organization/OrganizationId}" element="{propertyref:/external/addressbook/InitSearchClubs:/ClubSearch/OrganizationId}" />
+                                           <set value="{property:/vla/tools/ProcessSelectOrganization:/Organization/OrganizationIdAndName}" element="{propertyref:/external/addressbook/InitSearchClubs:/ClubSearch/ClubName}" />
+                                           <set value="{property:/vla/tools/ProcessSelectOrganization:/Organization/OrganizationIdAndName}" element="{globalref:/searchKey}" />
+                                       </block>
+                                       <block condition="{property:/vla/tools/ProcessSelectOrganization:/OrganizationsFound/Count} &gt; 1">
+                                           <set value="{propertyref:/external/addressbook/InitSearchClubs:/ClubSearch/OrganizationId}" element="{globalref:/searchResultId}" />
+                                           <set value="{propertyref:/external/addressbook/InitSearchClubs:/ClubSearch/ClubName}" element="{globalref:/searchResultName}" />
+                                           <dialog.show path="{component://init/main/selectOrganizationDialog}" />
+                                       </block>
+                                       <block condition="{property:/vla/tools/ProcessSelectOrganization:/OrganizationsFound/Count} == 0">
+                                           <showInfo text="'Niets gevonden'" />
+                                       </block>
+                                   </block>
+				</onActionPerformed>
+                            </c.button>
+
+                            <c.property propertyname="'/ClubSearch/CityName'" label_indent="90" />
+                            <c.button borderVisible="false" enabled="false" id="searchButton" tooltip="'Zoek'" text="'Zoek'">
+                                <onActionPerformed>
+                                    <callService service="'external/addressbook/ProcessSearchClubs'" input="{navajo:/external/addressbook/InitSearchClubs}"/>
+                                </onActionPerformed>
+                            </c.button>
+                            <c.hidden />
+                            <c.hidden />
+			    <c.hidden />
+                            <c.property propertyname="'/ClubSearch/CommunityName'" label_indent="90" />
+                            <c.button borderVisible="false" enabled="true" id="resetButton" tooltip="'Reset zoekvelden'" text="'Reset'">
+                                <onActionPerformed>
+                                    <callService service="'external/addressbook/InitSearchClubs'" />
+                                </onActionPerformed>
+                            </c.button>
+                        </c.gridpanel>
+                        <c.tipitable ignoreList="{'ClubCommunity','Community','OrganizationId','ClubIdentifier','DistrictId'}" id="table" constraint="Center" service="external/addressbook/ProcessSearchClubs" messagepath="'/Club'" border="CreateTitledBorder('Verenigingen')" visible="true" columnsvisible="true" columnDefinitionSavePath="{global:/UserName} + '|columns_addressbookwindow_searchresultsclubs'" >
+                            <column editable="false" name="ClubName" label="'Vereniging'" size="120" />
+                            <column editable="false" name="RegionCode" label="'District'" size="120" />
+                            <column editable="false" name="StreetName" label="'Straat'" size="120" />
+                            <column editable="false" name="AddressNumber" label="'Huisnr.'" size="40" />
+                            <column editable="false" name="AddressNumberAppendix" label="'Toev.'" size="40" />
+                            <column editable="false" name="ZipCode" label="'Postcode'" size="80" />
+                            <column editable="false" name="City" label="'Plaats'" size="140" />
+                            <column editable="false" name="Telephone" label="'Telefoon'" size="80" />
+                            <column editable="false" name="Email" label="'E-mail'" size="160" />
+                        </c.tipitable>
+                        <c.gridpanel constraint="South" id="toolbar" columnWidth="'610 110 110 110'" border="CreateTitledBorder('')">
+                            <c.label text="' '" />
+                            <c.button text="'Teams'" tooltip="'Opvragen teams'">
+                                <onActionPerformed>
+                		    <block condition="{attribute:/../../table:selectedIndex} == -1">
+                                        <showInfo text="'Selecteer een rij'"/>
+                                    </block>
+                                    <block condition="{attribute:/../../table:selectedIndex} != -1">
+                                        <setValue to="{propertyref:/external/competition/InitCompetitionData:/ClubData/ClubId}" from="{property:/../../table:selectedMessage:ClubIdentifier}"/>
+                                        <setValue to="{propertyref:/external/competition/InitCompetitionData:/PoolData/CompetitionKind}" from="'DEFAULT_COMPETITION'"/>
+                                        <instantiate force="true" id="'clubTeamWindow'" name="'clubTeamWindow'" location="{component://init/main}" />
+                                        <callService service="'external/competition/ProcessGetClubTeams'" input="{navajo:/external/competition/InitCompetitionData}"/>
+                                    </block>
+                                </onActionPerformed>
+                           </c.button>
+                           <c.button text="'Wedstrijden'" tooltip="'Wedstrijdprogramma'">
+                                <onActionPerformed>
+                                    <block condition="{attribute:/../../table:selectedIndex} == -1">
+                                        <showInfo text="'Selecteer een rij'"/>
+                                    </block>
+                                    <block condition="{attribute:/../../table:selectedIndex} != -1">
+                                        <callService service="'external/competition/InitCompetitionData'"/> 
+                                        <setValue to="{propertyref:/external/competition/InitCompetitionData:/ClubData/ClubId}" from="{property:/../../table:selectedMessage:ClubIdentifier}"/>
+                                        <instantiate force="true" id="'matchList'" name="'matchList'" location="{component://init/main}" />
+                                        <callService service="'external/competition/ProcessGetCompetitionProgram'" input="{navajo:/external/competition/InitCompetitionData}"/>
+                                    </block>
+                                </onActionPerformed>
+                            </c.button>
+                            <c.button borderVisible="false" enabled="true" id="searchButton" tooltip="'Open'" text="'Open'">
+                                <onActionPerformed>
+                                    <block condition="{attribute:/../../table:selectedIndex} == -1">
+                                        <showInfo text="'Selecteer een rij'"/>
+                                    </block>
+                                    <block condition="{attribute:/../../table:selectedIndex} != -1">
+                                        <setValue to="{propertyref:/external/addressbook/ProcessSearchClubs:/ClubHolder/ClubIdentifier}" from="{property:/../../table:selectedMessage:ClubIdentifier}"/>
+                                        <callService service="'external/addressbook/ProcessQueryClub'" input="{navajo:/external/addressbook/ProcessSearchClubs}" />
+                                        <instantiate force="true" id="'clubWindow'" name="'clubWindow'" location="{component://init/main}" />
+                                    </block>
+                                </onActionPerformed>
+                            </c.button>
+                        </c.gridpanel>
+                    </l.border>
+                </c.tab>
+            </c.tabs>
+        </l.border>
+        <onWindowClosed>
+            <set value="null" element="{globalref:/searchResultId}" />
+            <set value="null" element="{globalref:/searchResultName}" />
+            <set value="null" element="{globalref:/sourceWindow}" />
+            <dispose path="{component://init/main/selectOrganizationDialog}" />
+            <dispose path="{component:/~}" />
+        </onWindowClosed>
+    </d.window>
+</tid>

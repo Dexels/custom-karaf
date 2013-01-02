@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<tid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" errorhandler="error" xsi:noNamespaceSchemaLocation="tipi.xsd">
+    <d.dialog h="500" modal="false" name="addressBookConsulsDialog" title="'Consuls'" w="620">
+        <onInstantiate>                                  
+            <dialog.show path="{component:/~}"/>
+            <injectNavajo service="'external/addressbook/ProcessQueryClub'" navajo="{navajo:/external/addressbook/ProcessQueryClub}"/>                     
+        </onInstantiate>
+        <l.border>
+            <c.tipitable ignoreList="{'Mobile'}" constraint="Center" id="table" service="external/addressbook/ProcessQueryClub" messagepath="'/Groundskeepers'" border="CreateTitledBorder('Consuls')" >
+                <column editable="false" name="FullName" label="'Naam'" size="160" />
+                <column editable="false" name="PersonId" label="'Relatiecode'" size="90" />
+                <column editable="false" name="Telephone" label="'Telefoon'" size="80" />
+                <column editable="false" name="Email" label="'E-mail'" size="180" />
+            </c.tipitable>
+        </l.border>
+        <onWindowClosed>
+            <dispose path="{component:/~}"/>
+        </onWindowClosed>
+    </d.dialog>
+</tid>

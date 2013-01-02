@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<tid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" errorhandler="error" xsi:noNamespaceSchemaLocation="tipi.xsd">
+	<d.window closable="true" h="525" name="officialAssignmentList" resizable="true" title="'Kandidaten'" movable="true" w="725" x="170" y="50">
+		<l.border>
+			<c.tipitable id="table" messagepath="'OfficialCandidates'" service="official/ProcessSearchMatchOfficials">
+				<column name="PersonId" label="'Relatiecode'" editable="false" size="150" />
+				<column name="Name" label="'Naam'" editable="false" size="60" />
+				<column name="OfficialLevelCode" label="'Niveau'" editable="false" size="60" />
+				<column name="ViolationReason" label="'Blokkeringsreden'" editable="false" size="60"/>
+			</c.tipitable>
+			<c.toolbar id="toolbar" constraint="South:50">
+				<c.button id="assign" text="'Toewijzen'" tooltip="'Wijs toe aan wedstrijd'">
+					<onActionPerformed>
+						<block expression="{attribute:/~/table:selectedIndex} == -1">
+							<showInfo text="'Selecteer a.u.b. een kandidaat.'" />
+						</block>
+						<block expression="{attribute:/~/table:selectedIndex} != -1">
+							<setValue from="{property:/~/table:selectedMessage:OfficialId}" to="{propertyref:/official/ProcessSearchMatchOfficials:/NewOfficial/OfficialId}" />
+							<setValue from="'SCHEDULED'" to="{propertyref:/official/ProcessSearchMatchOfficials:/NewOfficial/Status}" />
+							<callService input="{navajo:/official/ProcessSearchMatchOfficials}" service="'match/ProcessInsertOfficial'" />
+                                                        <callService input="{navajo:/officialportal/InitGetMatchOfficials}" service="'officialportal/ProcessGetMatchOfficials'" />
+                                                        <callService input="{navajo:/activities/InitQueryPersonActivities}" service="'official/ProcessQueryMatchAssigner'" /> 
+                                                        <dispose path="{component:/~}" />
+						</block>
+					</onActionPerformed>
+				</c.button>
+			</c.toolbar>
+		</l.border>
+	</d.window>
+</tid>

@@ -1,0 +1,5 @@
+<!-- Created by the Tipi plugin. Do not edit -->
+<!-- Creation date: Fri Jun 15 15:03:47 CEST 2007  -->
+<tid>
+    <tipi-include location="init.xml" lazy="true" definition="init" />
+</tid>

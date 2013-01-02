@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<tid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" errorhandler="error" xsi:noNamespaceSchemaLocation="tipi.xsd">
+	<d.tipiquestion name="QuestionLayout" showErrorMessage="false">
+		<c.column id="Panel" >
+			<c.property id="Name" propertyname="'Name'" showlabel="false" alwaysUseLabel="true" width="500" style="'question-header'"/>
+			<c.property id="Value" propertyname="'Value'" showlabel="false" selectiontype="'radio'"
+				checkboxGroupColumnCount="2" memoRowCount="4" memoColumnCount="50" horizontalScrolls="false" width="60" />
+			<c.column id="SubQuestions" columnWidth="'700'" visible="false" />
+		</c.column>
+	</d.tipiquestion>
+</tid>

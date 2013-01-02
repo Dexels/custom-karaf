@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<tid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" errorhandler="error" xsi:noNamespaceSchemaLocation="tipi.xsd">
+    <d.window closable="true" h="525" name="otherPersonActivityList" resizable="true" title="'Uw officialactiviteiten'" movable="true" w="800" x="170" y="50">
+        <l.border>
+            <c.tipitable id="table" messagepath="'Activities'" service="officialportal/ProcessQueryActivities">
+                <column name="FunctionDescription" label="'Uw rol'" editable="false" size="100"/>
+                <column name="ActivityName" label="'Activiteit'" editable="false" size="250"/>
+                <column name="CalendarDate" label="'Datum'" editable="false" size="70"/>
+                <column name="StartTime" label="'Starttijd'" editable="false" size="50"/>
+                <column name="SportDescription" label="'Type'" editable="false" size="50"/>
+                <column name="Status" label="'Status'" editable="false" size="70"/>
+                <onReport>
+                    <openBinary binary="{event:/report}" newWindow="true"/>
+                </onReport>
+            </c.tipitable>
+        </l.border>
+    </d.window>
+</tid>

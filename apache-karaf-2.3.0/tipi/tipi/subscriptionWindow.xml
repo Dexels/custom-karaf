@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<tid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" errorhandler="error" xsi:noNamespaceSchemaLocation="tipi.xsd">
+    <d.window closable="true" h="325" name="subscriptionWindow" resizable="true" title="'Uw abonnementen'" movable="true" w="700" x="120" y="80">
+        <onInstantiate>
+            <callService service="'relations/InitUpdateSubscription'"/>
+            <callService input="{navajo:/member/InitUpdateMember}" service="'relations/ProcessQuerySubscriptions'"/>
+        </onInstantiate>
+        <l.border>
+            <c.tipitable id="table" messagepath="'Subscriptions'" service="relations/ProcessQuerySubscriptions" rowsPerPage="0">
+                <column name="PublicationName" label="'Publicatie'" editable="false" size="380" />
+                <column name="OrganizationName" label="'Organisatie'" editable="false" size="310" />
+                <onReport>
+                    <openBinary binary="{event:/report}"  newWindow="true"/>
+                </onReport>
+            </c.tipitable> 
+            <c.toolbar id="toolbar" constraint="South:50">
+                <c.button id="subscriptiondetails" text="'Ontvangstadressen'" tooltip="'bekijk ontvangers'">
+                    <onActionPerformed>
+                        <block expression="{attribute:/~/table:selectedIndex} == -1">
+                            <showInfo text="'Selecteer a.u.b. een publicatie.'" />
+                        </block>
+                        <block expression="{attribute:/~/table:selectedIndex} != -1">
+                            <instantiate force="true" id="'subscriptionRecipientsWindow'" name="'subscriptionRecipientsWindow'" location="{component://init/main}" />
+                            <setValue from="{property:/~/table:selectedMessage:SubscriptionId}" to="{propertyref:/relations/InitUpdateSubscription:/SelectGlobals/SubscriptionId}" />
+                            <callService input="{navajo:/relations/InitUpdateSubscription}" service="'relations/ProcessQuerySubscriptionForwardAddresses'" />
+                        </block>
+                    </onActionPerformed>
+                </c.button>
+             </c.toolbar>
+        </l.border>
+    </d.window>
+</tid>

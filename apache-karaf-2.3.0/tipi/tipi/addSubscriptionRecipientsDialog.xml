@@ -1,0 +1,24 @@
+<tid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" errorhandler="error" xsi:noNamespaceSchemaLocation="tipi.xsd">
+	<d.window closable="true" h="170" name="addSubscriptionRecipientsDialog" resizable="true" visible="true"
+		title="'Ontvangstadres toevoegen'" movable="true" w="380" x="180" y="150">
+		<l.border>
+           <c.panel service="relations/InsertSubscriptionRecipient">
+                <c.property propertyname="'/NewSubscriptionForwardAddress/EmailAddress'" label_indent="160"/>
+            </c.panel>
+ 			<c.toolbar id="toolbar" constraint="South">
+				<c.button text="'Opslaan'">
+					<onActionPerformed>
+						<callService input="{navajo:/relations/ProcessQuerySubscriptionForwardAddresses}" service="'relations/ProcessInsertSubscriptionForwardAddress'" />
+						<callService input="{navajo:/relations/InitUpdateSubscription}" service="'relations/ProcessQuerySubscriptionForwardAddresses'" />
+						<dispose path="{component:/~}" />
+					</onActionPerformed>
+				</c.button>
+				<c.button text="'Annuleren'" >
+					<onActionPerformed>
+						<dispose path="{component:/~}" />
+					</onActionPerformed>
+				</c.button>
+			</c.toolbar>
+		</l.border>
+	</d.window>
+</tid>

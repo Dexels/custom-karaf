@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<tid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" errorhandler="error" xsi:noNamespaceSchemaLocation="tipi.xsd">
+    <d.window closable="true" h="525" name="chargeDocumentListWindow" resizable="true" title="'Documenten'" movable="true" w="840" x="20" y="80">
+        <l.border>
+            <c.tipitable id="table" constraint="Center" messagepath="'Documents'" service="lucene/ProcessQueryDocumentsByAuthor">
+                <column name="Description" label="'Omschrijving'" editable="false" size="280"/>
+                <column name="Name" label="'Bestandsnaam'" editable="false" size="180"/>
+                <column name="PublicationStart" label="'Aangemaakt'" editable="false" size="80"/>
+                <column name="LastUpdate" label="'Laatst gewijzigd'" editable="false" size="100"/>
+                <column name="UpdateBy" label="'Laatste wijziging door'" editable="false" size="100"/>
+                <onReport>
+                    <openBinary binary="{event:/report}" newWindow="true"/>
+                </onReport>
+                <onLoad>
+               		<block condition="Size({message:/lucene/ProcessQueryDocumentsByAuthor:Documents})==1">
+						<set element="{propertyref:/InitGetDoc:/DocumentData/DocumentId}" value="{property:/lucene/ProcessQueryDocumentsByAuthor:/Documents@0/DocumentId}"/>
+						<callService service="'lucene/ProcessGetDocumentData'" input="{navajo:/InitGetDoc}"/>
+						<openBinary binary="{property:/lucene/ProcessGetDocumentData:/DocumentData/Data}" newWindow="false" disposition="'attachment'"/>
+						<dispose path="{component:/~}"/>
+					</block>
+                </onLoad>
+            </c.tipitable>
+			<c.toolbar constraint="South">
+				<c.button text="'Openen'">
+					<onActionPerformed>
+						<set element="{propertyref:/InitGetDoc:/DocumentData/DocumentId}" value="GetPropertyValue({attribute:/~/table:selectedMessage},'DocumentId')"/>
+						<callService service="'lucene/ProcessGetDocumentData'" input="{navajo:/InitGetDoc}"/>
+						<openBinary binary="{property:/lucene/ProcessGetDocumentData:/DocumentData/Data}" newWindow="false" disposition="'attachment'"/>
+					</onActionPerformed>
+				</c.button>
+			</c.toolbar>
+        </l.border>
+    </d.window>
+    
+    <tml service="InitGetDoc">
+    	<message name="DocumentData">
+      		<property direction="out" name="DocumentId" type="string"/>
+    	</message>
+    </tml>
+    
+
+</tid>

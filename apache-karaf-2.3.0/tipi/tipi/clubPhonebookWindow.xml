@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<tid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" errorhandler="error" xsi:noNamespaceSchemaLocation="tipi.xsd">
+    <d.window title="'Telefoonboek verenigingen'" closable="true" h="450" name="clubPhonebookWindow" resizable="true" movable="true" w="900" x="30" y="60">
+        <onWindowClosed>
+            <setValue from="true" to="{attributeref://init/main/current:visible}"/>
+        </onWindowClosed>
+        <onInstantiate>
+            <callService service="'external/competition/InitCompetitionData'"/>
+        </onInstantiate>
+        <l.border>
+            <c.gridpanel constraint="North:100" id="naw" columnWidth="'120 200'" service="external/competition/InitCompetitionData">
+                <c.label text="'Naam vereniging'"/>
+                <c.property propertyname="'/SearchCriteria/ClubName'" showlabel="false" width="150">
+                    <onEnter>
+                        <button.fireAction path="{component:/../searchButton}"/>
+                    </onEnter>
+                </c.property>
+                <c.label text="'Plaats vereniging'"/>
+                <c.property propertyname="'/SearchCriteria/FacilityCity'" showlabel="false" width="150">
+                    <onEnter>
+                        <button.fireAction path="{component:/../searchButton}"/>
+                    </onEnter>
+                </c.property>
+                <c.button text="'Zoek'" id="searchButton" tooltip="'Enkele letters zijn voldoende'" defaultButton="true">
+                    <onActionPerformed>
+                        <block expression="Size({property:/external/competition/InitCompetitionData:/SearchCriteria/ClubName}) &lt; 3 AND Size({property:/external/competition/InitCompetitionData:/SearchCriteria/FacilityCity}) &lt; 3">
+                            <showError text="'Voer a.u.b. een zoekterm in van meer dan 3 karakters'"/>
+                            <breakEvent/>
+                        </block>
+                        <callService service="'officialportal/ProcessSearchClubs'" input="{navajo:/external/competition/InitCompetitionData}"/>
+                    </onActionPerformed>
+                </c.button>
+            </c.gridpanel>
+            <c.tipitable headervisible="true" constraint="Center" id="clubTable" messagepath="'ClubData'" service="officialportal/ProcessSearchClubs" rowsPerPage="15">
+                <column name="ClubName" label="'Naam'" editable="false" size="200"/>
+                <column name="ClubStreetName" label="'Straat'" editable="false" size="150"/>
+                <column name="ClubAddressNumber" label="'Huisnr.'" editable="false" size="50"/>
+                <column name="ClubZipCode" label="'Postcode'" editable="false" size="70"/>
+                <column name="ClubCity" label="'Plaats'" editable="false" size="160"/>
+                <column name="ClubTelephone" label="'Telefoonnr.'" editable="false" size="100"/>
+            </c.tipitable>
+            <c.toolbar constraint="South:50">
+                <c.button text="'Teams'" tooltip="'Opvragen teams'">
+                    <onActionPerformed>
+                        <block expression="{attribute:/~/clubTable:selectedIndex}!=-1">
+                            <setValue to="{propertyref:/external/competition/InitCompetitionData:/ClubData/ClubId}" from="GetPropertyValue({attribute:/~/clubTable:selectedMessage},'ClubId')"/>
+                            <setValue to="{propertyref:/external/competition/InitCompetitionData:/PoolData/CompetitionKind}" from="'DEFAULT_COMPETITION'"/>
+                            <instantiate force="true" id="'clubTeamWindow'" name="'clubTeamWindow'" location="{component://init/main}" />
+                            <callService service="'external/competition/ProcessGetClubTeams'" input="{navajo:/external/competition/InitCompetitionData}"/>
+                        </block>
+                        <block expression="{attribute:/~/clubTable:selectedIndex}==-1">
+                            <showError text="'Selecteer a.u.b eerst een vereniging!'"/>
+                        </block>
+                    </onActionPerformed>
+                </c.button>
+                <c.button text="'Wedstrijden'" tooltip="'Wedstrijdprogramma'">
+                    <onActionPerformed>
+                        <block expression="{attribute:/~/clubTable:selectedIndex}!=-1">
+                            <callService service="'external/competition/InitCompetitionData'"/> 
+                            <setValue to="{propertyref:/external/competition/InitCompetitionData:/ClubData/ClubId}" from="GetPropertyValue({attribute:/~/clubTable:selectedMessage},'ClubId')"/>
+                            <instantiate force="true" id="'matchList'" name="'matchList'" location="{component://init/main}" />
+                            <callService service="'external/competition/ProcessGetCompetitionProgram'" input="{navajo:/external/competition/InitCompetitionData}"/>
+                        </block>
+                        <block expression="{attribute:/~/clubTable:selectedIndex}==-1">
+                            <showError text="'Selecteer a.u.b eerst een vereniging!'"/>
+                        </block>
+                    </onActionPerformed>
+                </c.button>
+            </c.toolbar>
+        </l.border>
+    </d.window>
+</tid>

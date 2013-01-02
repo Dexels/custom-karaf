@@ -1,0 +1,37 @@
+<tid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" errorhandler="error" xsi:noNamespaceSchemaLocation="tipi.xsd">
+    <d.window closable="true" h="300" name="boAddDialog" resizable="true" visible="true" title="'Enkele datum toevoegen'" movable="true" w="380" x="180" y="10">
+        <onInstantiate>
+<!--            <callService input="{navajo:/official/ProcessGetOfficialIdFromPersonId}" service="'official/ProcessQueryBlackOutDays'" />-->
+			<injectNavajo navajo="{navajo:/official/ProcessQueryBlackOutDays}" service="'official/BlackoutInject'"/>
+        </onInstantiate>
+        
+        <l.border>
+            <c.gridpanel columnWidth="'320'" service="official/BlackoutInject">
+            <onLoad>
+            	<dumpNavajo input="{navajo:/official/BlackoutInject}"/>
+            </onLoad>
+                <c.property propertyname="'/NewBlackOutDay/CalendarDate'" label_indent="160"/>
+                <c.property propertyname="'/NewBlackOutDay/StartTime'" label_indent="160" />
+                <c.property propertyname="'/NewBlackOutDay/EndTime'" label_indent="160" />
+                <c.property propertyname="'/NewBlackOutDay/Info'" label_indent="160" />
+            </c.gridpanel>
+            <c.toolbar id="toolbar" constraint="South:50">
+                <c.button text="'Opslaan'" tooltip="'opslaan en sluiten'">
+                    <onActionPerformed>
+            			<dumpNavajo input="{navajo:/official/BlackoutInject}"/>
+                        <dumpNavajo input="{navajo:/official/ProcessQueryBlackOutDays}"/>
+                        <callService input="{navajo:/official/ProcessQueryBlackOutDays}" service="'official/ProcessInsertBlackOutDay'" />
+						<dumpNavajo input="{navajo:/official/ProcessInsertBlackOutDay}"/>
+                        <callService input="{navajo:/official/ProcessGetOfficialIdFromPersonId}" service="'official/ProcessQueryBlackOutDays'" />
+                        <dispose path="{component:/~}" />
+                    </onActionPerformed>
+                </c.button>
+                <c.button text="'Annuleren'" tooltip="'annuleren'">
+                    <onActionPerformed>
+                        <dispose path="{component:/~}" />
+                    </onActionPerformed>
+                </c.button>
+            </c.toolbar>
+        </l.border>
+    </d.window>
+</tid>

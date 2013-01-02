@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<tid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" errorhandler="error" xsi:noNamespaceSchemaLocation="tipi.xsd">
+	<d.window closable="true" h="525" name="assignerActivityList" resizable="true" title="'Uw aanwijzer activiteiten'" movable="true" w="725" x="170" y="50">
+		<onInstantiate>
+			<callService service="'officialportal/InitGetReimbursementInfo'" />
+			<callService service="'officialportal/InitQueryMatch'" />
+			<callService service="'officialportal/InitGetMatchOfficials'" />
+		</onInstantiate>
+		<l.border>
+			<c.tipitable id="table" messagepath="'Matches'" service="official/ProcessQueryMatchAssigner">
+				<column name="ActivityName" label="'Activiteit'" editable="false" size="150" />
+				<column name="CalendarDate" label="'Datum'" editable="false" size="60" />
+				<column name="StartTime" label="'Tijd'" editable="false" size="50" />
+				<column name="ExternalMatchId" label="'Wedstr.'" editable="false" size="50" />
+				<column name="Officials" label="'Wedstrijdofficials'" editable="false" size="150" />
+				<!--<column name="CompetitionName" label="'Competitie'" editable="false" size="150" />-->
+				<onReport>
+					<openBinary binary="{event:/report}"  newWindow="true"/>
+				</onReport>
+			</c.tipitable>
+			<c.toolbar id="toolbar" constraint="South:50">
+				<c.button id="accommodation" text="'Accommodatiegegevens'" tooltip="'bekijk accommodatiedetails'">
+					<onActionPerformed>
+						<block expression="{attribute:/~/table:selectedIndex} == -1">
+							<showInfo text="'Selecteer a.u.b. een activiteit.'" />
+						</block>
+						<block expression="{attribute:/~/table:selectedIndex} != -1">
+							<block expression="GetPropertyValue({attribute:/~/table:selectedMessage},'FacilityId') == null">
+								<showInfo text="'Van deze activiteit zijn geen accommodatiedetails beschikbaar.'" />
+							</block>
+							<setValue from="{property:/~/table:selectedMessage:OfficialId}" to="{propertyref:/officialportal/InitGetReimbursementInfo:/AssignmentData/OfficialId}" />
+							<setValue from="{property:/~/table:selectedMessage:MatchId}" to="{propertyref:/officialportal/InitGetReimbursementInfo:/AssignmentData/MatchId}" />
+							<callService input="{navajo:/officialportal/InitGetReimbursementInfo}" service="'officialportal/ProcessGetReimbursementInfo'" />
+							<instantiate force="true" id="'currentDetail'" name="'facilityDetailWindow'" location="{component://init/main}" />
+							<reloadNavajo service="{navajo:/officialportal/ProcessGetReimbursementInfo}" />
+							<setValue to="{attributeref:/~:visible}" from="false" />
+						</block>
+					</onActionPerformed>
+				</c.button>
+				<c.button id="match" text="'Wedstrijdgegevens'" tooltip="'bekijk wedstrijddetails'">
+					<onActionPerformed>
+						<block expression="{attribute:/~/table:selectedIndex} == -1">
+							<showInfo text="'Selecteer a.u.b. een activiteit.'" />
+						</block>
+						<block expression="{attribute:/~/table:selectedIndex} != -1">
+							<block expression="GetPropertyValue({attribute:/~/table:selectedMessage},'ExternalMatchId') == null">
+								<showInfo text="'Van deze activiteit zijn geen wedstrijddetails beschikbaar.'" />
+							</block>
+							<block expression="GetPropertyValue({attribute:/~/table:selectedMessage},'ExternalMatchId') != null">
+                                                                <setValue from="{property:/~/table:selectedMessage:ActivityId}" to="{propertyref:/officialportal/InitQueryMatch:/Match/MatchId}"/>
+                                                                <setValue from="{global:/username}" to="{propertyref:/officialportal/InitQueryMatch:/Match/PersonId}"/>
+								<setValue from="{property:/~/table:selectedMessage:ActivityId}" to="{propertyref:/officialportal/InitGetMatchOfficials:/MatchData/MatchId}" />
+								<setValue from="{global:/username}" to="{propertyref:/officialportal/InitGetMatchOfficials:/MatchData/PersonId}" />
+								<callService input="{navajo:/officialportal/InitQueryMatch}" service="'officialportal/ProcessQueryMatch'" />
+								<instantiate force="true" id="'currentDetail'" name="'matchDetailWindow'" location="{component://init/main}" />
+								<callService input="{navajo:/officialportal/InitGetMatchOfficials}" service="'officialportal/ProcessGetMatchOfficials'" />
+								<setValue from="{property:/~/table:selectedMessage:ActivityName}" to="{attributeref://init/main/currentDetail:title}" />
+								<reloadNavajo service="{navajo:/officialportal/ProcessQueryMatch}" />
+								<setValue to="{attributeref:/~:visible}" from="false" />
+							</block>
+						</block>
+					</onActionPerformed>
+				</c.button>
+			</c.toolbar>
+		</l.border>
+	</d.window>
+</tid>

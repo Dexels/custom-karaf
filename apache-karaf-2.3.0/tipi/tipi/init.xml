@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<tid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" errorhandler="error" xsi:noNamespaceSchemaLocation="tipi.xsd">
+   <client-config impl="'indirect'" password="{system:/navajoPwd}" server="{system:/navajoServer}" username="{system:/navajoUsr}" />
+   <d.frame background="{color:/#ffffff}" centered="true" icon="{resource:/tipi/icons/logo_mini.png}" name="init" title="'Sportlink - '+{system:/union}+' Official Portal'"
+      visible="true" w="1024">
+      <onInstantiate>
+         <instantiate id="'mfLogin'" location="{tipi:/./main}" name="'mfLogin'" />
+         <performTipiMethod name="'show'" path="{tipi://init/main/mfLogin}" />
+      </onInstantiate>
+		<!-- username="'BBKF74L'" password="'bmq5ChtE'" -->
+
+<!--		<c.panel id="top" constraint="Center" />-->
+
+		<c.messagestore id="mfLoginResult" service="officialportal/ProcessLogin">
+			<onLoad>
+				<!-- user logged in -->
+				<block expression="[/Authenticated/Ok] == true">
+					<setValue from="[/UserData/UserName]" to="{globalref:/username}" />
+					<block expression="{attribute://init/main/mfLogin/panel/loginPane/saveUID:selected}">
+						<setCookie name="'opuser'" value="{property:/officialportal/ProcessLogin:UserData/UserName}" />
+						<setCookie name="'oppass'" value="{property:/officialportal/ProcessLogin:UserData/Password}" />
+					</block>
+					<!-- Get a multi use conflict, due to shared NavajoClient instances. Can be reactivated when tipi refactor is complete. -->
+					<!--<setPostman username="{property:/officialportal/ProcessLogin:/UserData/UserName}" password="{property:/officialportal/ProcessLogin:UserData/Password}" 
+						server="{system:/navajoServer}" />
+ -->
+					<setUsername username="{property:/officialportal/ProcessLogin:/UserData/UserName}"/>
+					<setPassword password="{property:/officialportal/ProcessLogin:/UserData/Password}"/>
+					<setValue from="[/UserData/Password]" to="{globalref:/password}" />
+					<callService service="'member/InitUpdateMember'" />
+					<callService service="'utils/InitGetZipcodeDistance'" />
+					<callService service="'external/competition/InitCompetitionData'" />
+<!-- 
+					<setValue from="{global:/username}" to="{attributeref://init/mail:username}" />
+					<setValue from="{global:/password}" to="{attributeref://init/mail:password}" />
+ -->
+					<setValue from="{global:/username}" to="{propertyref:/member/InitUpdateMember:/SelectGlobals/PersonId}" />
+					<callService input="{navajo:/member/InitUpdateMember}" service="'officialportal/ProcessQueryMember'" />
+					<block expression="{property:/officialportal/ProcessQueryMember:MemberData/Infix} != null">
+						<setValue
+							from="{property:/officialportal/ProcessQueryMember:MemberData/FirstName}+' ' + {property:/officialportal/ProcessQueryMember:MemberData/Infix} + ' ' +{property:/officialportal/ProcessQueryMember:MemberData/LastName}"
+							to="{globalref:/FullName}" />
+					</block>
+					<block expression="{property:/officialportal/ProcessQueryMember:MemberData/Infix} == null">
+						<setValue
+							from="{property:/officialportal/ProcessQueryMember:MemberData/FirstName}+' ' +{property:/officialportal/ProcessQueryMember:MemberData/LastName}"
+							to="{globalref:/FullName}" />
+					</block>
+					<setValue from="'Welkom, ' + {global:/FullName}" to="{attributeref://init:title}" />
+	<!-- 				<instantiate id="'mainMenu'" name="'mainMenu'" location="{component://init/main}" constraint="'East:200'" /> -->
+					<performTipiMethod name="'hide'" path="{component://init/main/mfLogin}" />
+					<instantiate force="true" id="'current'" name="'officialActivityList'" location="{component://init/main}" />
+					<callService service="'activities/InitQueryPersonActivities'" />
+					<setValue from="true" to="{propertyref:/activities/InitQueryPersonActivities:/PersonActivities/IgnorePast}" />
+					<setValue from="true" to="{propertyref:/activities/InitQueryPersonActivities:/PersonActivities/IgnoreConcept}" />
+					<setValue from="{property:/officialportal/ProcessLogin:/UserData/UserName}" to="{propertyref:/activities/InitQueryPersonActivities:/PersonActivities/PersonId}" />
+					<callService input="{navajo:/activities/InitQueryPersonActivities}" service="'officialportal/ProcessQueryToDoList'" />
+					<instantiate location="{component:/init}" name="'menu'" id="'menu'" constraint="'North:35'" />
+					<set element="{attributeref://init/menu/activities/officialofficial:visible}" value="{property:/officialportal/ProcessLogin:/Authenticated/IsOfficialOfficial} AND ( {system:/union} == 'KNVB' OR {system:/union} == 'KNKV' )"/>
+					<set element="{attributeref://init/menu/info/viewExcesses:visible}" value="{property:/officialportal/ProcessLogin:/Authenticated/IsExcessViewer} AND ( {system:/union} == 'KNVB' )"/>
+				</block>
+				<!-- login failed, try again -->
+				<block expression="[/Authenticated/Ok] == false">
+					<showInfo text="'Het inloggen is niet gelukt. Probeer het nog eens...'" />
+
+					
+<!-- Makes no sense					<performMethod method="'matchform/InitLoginMatchFormUser'" tipipath="{tipi:/.}" /> -->
+				</block>
+			</onLoad>
+		</c.messagestore>
+		<l.border>
+			<c.panel id="logos" constraint="South:0">
+				<l.csslayout>
+					<c.label id="mainLogo"  style="'mainLogo'"/>
+					<c.label id="lineLabel"  style="'lineLabel'"/>
+					<c.label id="mainTitle" text="'Koninklijke Nederlandse Voetbalbond'" style="'mainTitle'"/>
+				</l.csslayout>
+			</c.panel>
+			<c.panel id="main" constraint="Center" >
+	
+			</c.panel>
+		</l.border>
+	</d.frame>
+</tid>

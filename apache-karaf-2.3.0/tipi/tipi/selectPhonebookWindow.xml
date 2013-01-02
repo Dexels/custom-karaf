@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" errorhandler="error" xsi:noNamespaceSchemaLocation="tipi.xsd">
+    <d.window closable="true" h="150" name="selectPhonebookWindow" resizable="true" visible="true" title="'Selecteer type'" movable="true" w="300" x="180" y="200">
+        <onInstantiate>
+            <callService service="'officialportal/InitSearchPhoneBook'"/>
+        </onInstantiate>
+        <onWindowClosed>
+            <dispose path="{component:/~}" />
+        </onWindowClosed>
+        <l.flow>
+            <c.gridpanel opaque="true" id="selectPersonType" service="officialportal/InitSearchPhoneBook" columnWidth="'600'" visible="true">
+                <c.property propertyname="'/Entry/SelectType'" showlabel="false" selectiontype="'radio'">
+                    <onValueChanged>
+                        <block expression="{property:/officialportal/InitSearchPhoneBook:/Entry/SelectType} == 'SC'">
+                            <instantiate force="true" id="'officialPhonebookWindow'" name="'officialPhonebookWindow'" location="{component://init/main}" />
+                            <callService service="'relations/InitSearchPersons'"/>
+                            <dispose path="{component:/~}" />
+                        </block>
+                        <block expression="{property:/officialportal/InitSearchPhoneBook:/Entry/SelectType} == 'VE'">
+                            <instantiate force="true" id="'clubPhonebookWindow'" name="'clubPhonebookWindow'" location="{component://init/main}" />
+                            <callService service="'relations/InitSearchPersons'"/>
+                            <dispose path="{component:/~}" />
+                        </block>
+                        <block expression="{property:/officialportal/InitSearchPhoneBook:/Entry/SelectType} == 'AC'">
+                            <instantiate force="true" id="'facilityPhonebookWindow'" name="'facilityPhonebookWindow'" location="{component://init/main}" />
+                            <callService service="'relations/InitSearchPersons'"/>
+                            <dispose path="{component:/~}" />
+                        </block>
+                    </onValueChanged>
+                 </c.property>
+            </c.gridpanel>
+        </l.flow>
+    </d.window>
+</tid>

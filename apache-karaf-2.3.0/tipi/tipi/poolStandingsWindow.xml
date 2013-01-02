@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" errorhandler="error" xsi:noNamespaceSchemaLocation="tipi.xsd">
+    <d.window title="'Stand'" closable="true" h="550" name="poolStandingsWindow" resizable="true" movable="true" w="900" x="170" y="50">
+        <l.border>
+            <c.tipitable headervisible="true" constraint="Center" id="stand" messagepath="'PoolStandings'" service="external/competition/ProcessGetPoolStandings" rowsPerPage="20">
+                <onLoad>
+                    <setValue from="'Stand ' + {property:/external/competition/ProcessGetPoolStandings:/Pool/ClassName} + ' ' + {property:/external/competition/ProcessGetPoolStandings:/Pool/PoolName}" to="{attributeref:/~:title}"/>
+                </onLoad>
+                <column name="TeamName" label="'Naam'" editable="false" size="100"/>
+                <column name="TotalPoints" label="'Punten'" editable="false" size="80"/>
+                <column name="TotalMatches" label="'Wedstrijden'" editable="false" size="80"/>
+                <column name="GoalsDifference" label="'Doelsaldo'" editable="false" size="80"/>
+                <column name="Won" label="'Gewonnen'" editable="false" size="80"/>
+                <column name="Draw" label="'Verloren'" editable="false" size="80"/>
+                <column name="Lost" label="'Gelijk'" editable="false" size="80"/>
+                <column name="PenaltyPoints" label="'In mindering'" editable="false" size="80"/>
+            </c.tipitable>
+        </l.border>
+    </d.window>
+</tid>

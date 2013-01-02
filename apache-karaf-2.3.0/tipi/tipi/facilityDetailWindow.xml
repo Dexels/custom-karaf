@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<tid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" errorhandler="error" xsi:noNamespaceSchemaLocation="tipi.xsd">
+    <d.window closable="true" h="350" name="facilityDetailWindow" resizable="true" movable="true" w="520" x="170" y="45">
+        <onWindowClosed>
+            <!--<setValue from="true" to="{attributeref://init/main/current:visible}" />-->
+        </onWindowClosed>
+        <l.border>
+            <c.column constraint="Center">
+                <c.gridpanel border="{border:/titled-Adres}" columnWidth="'480 240'" service="officialportal/ProcessGetReimbursementInfo">
+                    <onLoad>
+                        <setValue from="{property:/officialportal/ProcessGetReimbursementInfo:FacilityData/FacilityName}+' ('+{property:/officialportal/ProcessGetReimbursementInfo:FacilityData/FacilityId}+')'" to="{attributeref:/~:title}" />
+                        <setValue from="{property:/officialportal/ProcessGetReimbursementInfo:FacilityData/FacilityName}" to="{attributeref:/./name:text}" />
+                        <setValue from="{property:/officialportal/ProcessGetReimbursementInfo:FacilityData/StreetName}+' '+{property:/officialportal/ProcessGetReimbursementInfo:FacilityData/AddressNumber}+' '+{property:/officialportal/ProcessGetReimbursementInfo:FacilityData/AddressNumberAppendix}" to="{attributeref:/./address:text}" />
+                        <setValue from="{property:/officialportal/ProcessGetReimbursementInfo:FacilityData/ZipCode}+' '+{property:/officialportal/ProcessGetReimbursementInfo:FacilityData/City}" to="{attributeref:/./city:text}" />
+                        <setValue from="{property:/officialportal/ProcessGetReimbursementInfo:FacilityData/TelephoneData}" to="{attributeref:/./communication:text}" />
+                        <setValue from="{property:/officialportal/ProcessGetReimbursementInfo:FacilityData/TelephoneData} != ''" to="{attributeref:/./communication:visible}" />
+                        <setValue from="{property:/officialportal/ProcessGetReimbursementInfo:FacilityData/EmailData}!=''" to="{attributeref:/./emailbutton:visible}" />
+                        <setValue from="{property:/officialportal/ProcessGetReimbursementInfo:FacilityData/EmailData}" to="{attributeref:/./emailbutton:text}" />
+                        <setValue from="{property:/officialportal/ProcessGetReimbursementInfo:FacilityData/WebsiteData} != ''" to="{attributeref:/./websitebutton:visible}" />
+                        <setValue from="{property:/officialportal/ProcessGetReimbursementInfo:FacilityData/WebsiteData}" to="{attributeref:/./websitebutton:text}" />
+                    </onLoad>
+                    <c.label id="name"/>
+                    <c.hidden/>
+                    <c.label id="address"/>
+                    <c.hidden/>
+                    <c.label id="city"/>
+                    <c.hidden/>
+                    <c.label id="communication" />
+                    <!-- email and website buttons -->
+                    <c.button id="emailbutton">
+                        <onActionPerformed>
+                            <showInfo text="ToString({property:/officialportal/ProcessGetReimbursementInfo:FacilityData/EmailData}!=null)" />
+                            <openBrowser url="'mailto:'+{property:/officialportal/ProcessGetReimbursementInfo:FacilityData/EmailData}" newWindow="false" />
+                        </onActionPerformed>
+                    </c.button>
+                    <c.button id="websitebutton" style="'LargeLinkButton'">
+                        <onActionPerformed>
+                            <openBrowser url="'http://'+{property:/officialportal/ProcessGetReimbursementInfo:FacilityData/WebsiteData}" />
+                        </onActionPerformed>
+                    </c.button>
+                </c.gridpanel>
+                <c.gridpanel id="distancePanel" border="{border:/titled-Vergoedingen}" columnWidth="'120 240'" service="officialportal/ProcessGetReimbursementInfo">
+                    <onLoad>
+                        <setValue from="ToString({property:/officialportal/ProcessGetReimbursementInfo:Result/DistanceKm} * 2)" to="{attributeref:/./distance:text}" />
+                        <setValue from="ToString({property:/officialportal/ProcessGetReimbursementInfo:ReimbursementInfo/Amount})" to="{attributeref:/./amount:text}" />
+                        <setValue from="FormatDate({property:/officialportal/ProcessGetReimbursementInfo:ReimbursementInfo/PaymentDate}, 'dd-MMM-yyyy', 'NL')" to="{attributeref:/./paymentdate:text}" />
+                    </onLoad>
+                    <c.label text="'Afstand (km):'" />
+                    <c.label id="distance" />
+                    <c.label text="'Bedrag (euro):'" />
+                    <c.label id="amount" />
+                    <c.label text="'Betaaldatum:'" visible="{system:/union} != 'KNVB'" />
+                    <c.label id="paymentdate" visible="{system:/union} != 'KNVB'" />
+                </c.gridpanel>
+            </c.column>          
+            <c.toolbar constraint="South:50">
+                <c.button text="'Open routebeschrijving'" tooltip="'open routebeschrijving'">               
+                    <onActionPerformed>
+                        <!--<openBrowser url="'http://maps.google.com/maps?hl=nl&amp;geocode=&amp;saddr='+{property:/officialportal/ProcessQueryMember:MemberData/StreetName}+'%20'+{property:/officialportal/ProcessQueryMember:MemberData/AddressNumber}+'%20'+{property:/officialportal/ProcessQueryMember:MemberData/City}+'&amp;daddr='+{property:/officialportal/ProcessGetReimbursementInfo:FacilityData/StreetName}+'%20'+{property:/officialportal/ProcessGetReimbursementInfo:FacilityData/AddressNumber}+'%20'+{property:/officialportal/ProcessGetReimbursementInfo:FacilityData/City}" />-->
+                        <!--<showInfo text="StringFunction('replaceAll','http://route.anwb.nl/routeplanner/servlet/rp?action=0&amp;city1='+{property:/officialportal/ProcessQueryMember:MemberData/City}+'&amp;street1='+{property:/officialportal/ProcessQueryMember:MemberData/StreetName}+'&amp;housenr1='+{property:/officialportal/ProcessQueryMember:MemberData/AddressNumber}+'&amp;city2='+{property:/officialportal/ProcessGetReimbursementInfo:FacilityData/City}+'&amp;street2='+{property:/officialportal/ProcessGetReimbursementInfo:FacilityData/StreetName}+'&amp;housenr2='+{property:/officialportal/ProcessGetReimbursementInfo:FacilityData/AddressNumber}+'&amp;iad=homepage.navigatie.middenkolom.routeplannerplanroute',' ','%20')"/>-->
+                        <openBrowser url="StringFunction('replaceAll','http://route.anwb.nl/routeplanner/servlet/rp?action=0&amp;city1='+{property:/officialportal/ProcessQueryMember:MemberData/City}+'&amp;street1='+{property:/officialportal/ProcessQueryMember:MemberData/StreetName}+'&amp;housenr1='+{property:/officialportal/ProcessQueryMember:MemberData/AddressNumber}+'&amp;city2='+{property:/officialportal/ProcessGetReimbursementInfo:FacilityData/City}+'&amp;street2='+{property:/officialportal/ProcessGetReimbursementInfo:FacilityData/StreetName}+'&amp;housenr2='+{property:/officialportal/ProcessGetReimbursementInfo:FacilityData/AddressNumber}+'&amp;iad=homepage.navigatie.middenkolom.routeplannerplanroute' + '&amp;planmode=Fastest',' ','%20')"/>
+                    </onActionPerformed>
+                </c.button>
+            </c.toolbar>
+        </l.border>
+    </d.window>
+</tid>

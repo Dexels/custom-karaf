@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<tid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" errorhandler="error" xsi:noNamespaceSchemaLocation="tipi.xsd">
+	<d.window closable="true" h="550" name="newMailList" resizable="true" title="'Binnengekomen post'" movable="true" w="764"
+		x="30" y="50">
+		<onWindowClosed>
+		</onWindowClosed>
+		<l.border>
+			<c.tipitable constraint="North:150" id="messageTable" filtersvisible="false" headervisible="false"
+				service="officialportal/ProcessGetOfficialEmailList" messagepath="'MailBox/Mail'">
+				<column name="MessageNumber" label="'nr.'" editable="false" size="50" />
+				<column name="Subject" label="'Onderwerp'" editable="false" size="200" />
+				<column name="SentDate" label="'Datum'" editable="false" size="100" />
+				<column name="From" label="'Afzender'" editable="false" condition="{attributeref:/..:selected}" />
+				<onSelectionChanged>
+					<setValue from="GetPropertyValue({event:/selectedMessage},'MessageName')" to="{propertyref:/officialportal/InitGetOfficialEmail:Folder/MessageName}" />
+					<callService input="{navajo:/officialportal/InitGetOfficialEmail}" service="'officialportal/ProcessGetOfficialEmail'" />
+					<setValue to="{attributeref:/../browserpane/browser:url}"
+						from="CreateExpressionUrl({context:/},CreateEchoMailUrl({context:/},GetMailNavajo({property:/officialportal/ProcessGetOfficialEmail:/MailBox/Mail@0/Content}),'Temp'),'text/html')" />
+					<dumpNavajo input="{navajo:/Temp}"/>
+					<button.attribute path="{component:/~/toolbar/attachmentButton}" visible="PartCount({property:/officialportal/ProcessGetOfficialEmail:/MailBox/Mail@0/Content}) &gt; 3" />
+				</onSelectionChanged>
+			</c.tipitable>
+			<c.tipi id="browserpane" constraint="Center" style="'mail'">
+				<l.border>
+					<c.browser id="browser" constraint="Center" url="'tipi/blanco.html'" />
+				</l.border>
+			</c.tipi>
+			<c.toolbar constraint="South:50" id="toolbar">				
+				<c.button text="'Printvriendelijk'">
+					<onActionPerformed>
+<!--						<openBinary binary="GetPart({property:/officialportal/ProcessGetOfficialEmail:/MailBox/Mail@0/Content},2)"/>
+ -->						<openBrowser newWindow="true" url="CreateExpressionUrl({context:/},CreateEchoMailUrl({context:/},GetMailNavajo({property:/officialportal/ProcessGetOfficialEmail:/MailBox/Mail@0/Content}),'Temp'))" />
+ 					</onActionPerformed>
+				</c.button>
+				<c.button text="'Verwijderen'">
+					<onActionPerformed>
+						<block  condition="{attribute:/../../messageTable:selectedIndex}==-1">
+							<showInfo text="'Kies a.u.b. eerst een bericht.'"/>
+							<breakEvent/>
+						</block>
+						<block  condition="{attribute:/../../messageTable:selectedIndex}!=-1">
+							<callService service="'officialportal/ProcessDeleteOfficialEmail'" input="{navajo:/officialportal/InitGetOfficialEmail}"/>
+							<callService service="'officialportal/ProcessGetOfficialEmailList'" input="{navajo:/officialportal/InitGetOfficialEmail}" />
+		
+						</block>
+					</onActionPerformed>
+				</c.button>
+				<c.button id="attachmentButton" text="'Bijlage openen'" tooltip="'Bijlage openen'" borderVisible="false" visible="false">
+                        	    <onActionPerformed>
+              	           	<openBinary binary="GetPropertyValue(GetMailNavajo({property:/officialportal/ProcessGetOfficialEmail:/MailBox/Mail@0/Content}),'Mail/Parts@3/Content')" newWindow="true"/>
+							<!-- 	<openBrowser newWindow="true" url="CreateExpressionUrl({context:/},CreateEchoMailUrl({context:/},GetMailNavajo({property:/officialportal/ProcessGetOfficialEmail:/MailBox/Mail@3/Content}),'bijlage'))" />
+ 	        	                 -->    </onActionPerformed>
+	                        </c.button>
+			</c.toolbar>
+		</l.border>
+	</d.window>
+</tid>

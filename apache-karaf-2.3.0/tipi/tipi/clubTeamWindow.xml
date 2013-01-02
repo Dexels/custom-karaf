@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" errorhandler="error" xsi:noNamespaceSchemaLocation="tipi.xsd">
+    <d.window title="'Teamoverzicht'" closable="true" h="550" name="clubTeamWindow" resizable="true" movable="true" w="900" x="170" y="50">
+        <l.border>
+            <c.tipitable headervisible="true" constraint="Center" id="teamTable" messagepath="'Teams'" service="external/competition/ProcessGetClubTeams" rowsPerPage="100">
+                <column name="TeamName" label="'Naam'" editable="false" size="100"/>
+                <column name="SportDescription" label="'Speltype'" editable="false" size="100"/>
+                <column name="CompetitionTypeName" label="'Aanduiding'" editable="false" size="100"/>
+                <column name="ClassName" label="'Klassenaam'" editable="false" size="100"/>
+                <column name="PoolName" label="'Poulenaam'" editable="false" size="100"/>
+            </c.tipitable>
+            <c.toolbar constraint="South:50"> 
+               <c.button text="'Wedstrijdprogramma'" tooltip="'Wedstrijdprogramma'">
+                    <onActionPerformed>
+                        <block expression="{attribute:/~/teamTable:selectedIndex}!=-1">
+                            <callService service="'external/competition/InitCompetitionData'"/>
+                            <setValue to="{propertyref:/external/competition/InitCompetitionData:/Team/TeamId}" from="GetPropertyValue({attribute:/~/teamTable:selectedMessage},'TeamId')"/>
+                            <setValue to="{propertyref:/external/competition/InitCompetitionData:/SearchCriteria/RoundFrom}" from="-1"/>
+                            <setValue to="{propertyref:/external/competition/InitCompetitionData:/SearchCriteria/RoundTo}" from="100"/>
+                            <instantiate force="true" id="'matchList'" name="'matchList'" location="{component://init/main}" />
+                            <callService service="'external/competition/ProcessGetCompetitionProgram'" input="{navajo:/external/competition/InitCompetitionData}"/>
+                        </block>
+                        <block expression="{attribute:/~/teamTable:selectedIndex}==-1">
+                            <showError text="'Selecteer a.u.b eerst een team!'"/>
+                        </block>
+                    </onActionPerformed>
+                </c.button>
+                <c.button text="'Stand'" tooltip="'Stand'" id="standingsButton">
+                    <onActionPerformed>
+                        <block expression="{system:/union} == 'KNVB'">
+                            <showInfo text="'De stand kan alleen worden opgehaald via voetbal.nl'"/>
+                            <breakEvent/>
+                        </block>
+                        <block expression="{attribute:/~/teamTable:selectedIndex} == -1">
+                            <showError text="'Selecteer a.u.b eerst een team!'"/>
+                            <breakEvent/>
+                        </block>
+                        <setValue from="GetPropertyValue({attribute:/~/teamTable:selectedMessage},'PoolId')" to="{propertyref:/external/competition/InitCompetitionData:/PoolData/PoolId}"/>
+                        <instantiate force="true" id="'poolStandingsWindow'" name="'poolStandingsWindow'" location="{component://init/main}"/>
+                        <callService service="'external/competition/ProcessGetPoolStandings'" input="{navajo:/external/competition/InitCompetitionData}"/>
+                        <setValue from="GetPropertyValue({attribute:/~/teamTable:selectedMessage}, 'ClassName') + ' ' + GetPropertyValue({attribute:/~/teamTable:selectedMessage}, 'PoolName')" to="{attributeref://init/main/poolStandingsWindow:title}" />
+                        <setValue from="null" to="{propertyref:/external/competition/InitCompetitionData:/PoolData/PoolId}"/>
+                    </onActionPerformed>
+                </c.button>
+            </c.toolbar>
+        </l.border>
+    </d.window>
+</tid>

@@ -1,0 +1,238 @@
+<tid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="tipi.xsd">
+<d.window h="580" closable="true" movable="true" name="dwfMatchFormWindow" title="'Wedstrijdformulier'" w="920" x="170" y="50">
+<l.border>
+    <!-- header displays matchdetails -->
+    <c.gridpanel constraint="North:50" columnWidth="'600'" id="dwfMatchForm" service="matchform/ProcessQueryMatchForm">
+	<onLoad>
+	    <!-- call bunch of services nevertheless -->
+	    <callService service="'matchform/ProcessQueryMatchOfficials'" input="{navajo:/matchform/ProcessQueryMatchForm}" />
+	    <callService service="'matchform/ProcessGetClubOfficials'" input="{navajo:/matchform/ProcessQueryMatchForm}" />
+	    <callService service="'matchform/ProcessQueryMatchHomePersons'" input="{navajo:/matchform/InitUpdateMatchForm}" />
+	    <callService service="'matchform/ProcessQueryMatchAwayPersons'" input="{navajo:/matchform/InitUpdateMatchForm}" />
+            <callService service="'match/events/InitGetMatchEvents'" input="{navajo:/matchform/InitUpdateMatchForm}" />
+            <setValue from="{property:/matchform/InitUpdateMatchForm:/MatchForm/MatchId}" to="{propertyref:/match/events/InitGetMatchEvents:/Match/MatchId}" />
+            <callService service="'match/events/ProcessGetMatchEvents'" input="{navajo:/match/events/InitGetMatchEvents}" />
+	    <callService service="'matchform/InitUpdateAuthorization'" input="{navajo:/matchform/ProcessQueryMatchForm}" />
+            <setValue from="{property:/matchform/ProcessQueryMatchForm:/MatchDetails/ExternalMatchId} + ', ' + {property:/matchform/ProcessQueryMatchForm:/MatchDetails/MatchDate} + ' om ' + {property:/matchform/ProcessQueryMatchForm:/MatchDetails/MatchTimeFormatted} + ', ' + {property:/matchform/ProcessQueryMatchForm:/MatchDetails/HomeTeam} + ' - ' + {property:/matchform/ProcessQueryMatchForm:/MatchDetails/AwayTeam} + ' (' + {property:/matchform/ProcessQueryMatchForm:/MatchDetails/SportDescription}  + ' - ' + {property:/matchform/ProcessQueryMatchForm:/MatchDetails/AgeClassDescription} + ', poule: ' + {property:/matchform/ProcessQueryMatchForm:/MatchDetails/PoolName} + ')'" to="{attributeref:/./myLabel:text}" />
+	</onLoad>
+        <c.label text="''" id="myLabel" />
+    </c.gridpanel>
+    <c.tabs constraint="Center" id="myTabs">
+        <onTabChanged>
+            <!-- "confirmTab" (vastleggen) selected : get summary -->
+            <block condition="{attribute:/.:selectedindex} == 4">
+                <callService input="{navajo:/matchform/ProcessQueryMatchForm}" service="'matchform/ProcessGetMatchSummary'" />
+            </block>
+        </onTabChanged>
+	<!-- tab: hometeam -->
+	<c.tipitable headervisible="false" constraint="Thuisteam" id="dwfHomePersonsTable" messagepath="'MatchPersons'" service="matchform/ProcessQueryMatchHomePersons">
+	    <column label="'Rugnr.'" name="ShirtNumber" size="20" editable="true" />
+	    <column label="'Naam'" name="Name" size="180" />
+	    <column label="'Geslacht'" name="Sex" size="80" />
+	    <column label="'Rel.cd.'" name="PersonId" size="80" />
+	    <column label="'Basis'" name="IsBasePlayer" size="50" condition="{property:/matchform/ProcessQueryMatchForm:/MatchDetails/ACategory}" editable="true" />
+	    <column label="'Aanvoerder'" name="IsCaptain" size="60" editable="true" />
+	    <column label="'Spelerspas'" name="HasPlayersPass" size="70" editable="true" />
+	    <column label="'Legitimatie'" name="HasIdentification" size="70" condition="{system:/navajo.globals.DefaultSport} == 'KORFBAL'" editable="true" />
+	    <column label="'Rol'" name="RoleDescription" size="120" />
+	    <column label="'Functie'" name="FunctionDescription" size="120" />
+	    <remarks />
+	</c.tipitable>
+        <!-- tab: awayteam -->
+        <c.tipitable headervisible="false" constraint="Uitteam" id="dwfAwayPersonsTable" messagepath="'MatchPersons'" service="matchform/ProcessQueryMatchAwayPersons">
+            <column label="'Rugnr.'" name="ShirtNumber" size="30" editable="true" />
+            <column label="'Naam'" name="Name" size="180" />
+            <column label="'Geslacht'" name="Sex" size="80" />
+            <column label="'Rel.cd.'" name="PersonId" size="80" />
+            <column label="'Basis'" name="IsBasePlayer" size="50" condition="{property:/matchform/ProcessQueryMatchForm:/MatchDetails/ACategory}" editable="true" />
+            <column label="'Aanvoerder'" name="IsCaptain" size="60" editable="true" />
+            <column label="'Spelerspas'" name="HasPlayersPass" size="70" editable="true" />
+            <column label="'Legitimatie'" name="HasIdentification" size="70" condition="{system:/navajo.globals.DefaultSport} == 'KORFBAL'" editable="true" />
+            <column label="'Rol'" name="RoleDescription" size="120" />
+            <column label="'Functie'" name="FunctionDescription" size="120" />
+            <remarks />
+        </c.tipitable>
+        <!-- tabs: displaying officials -->
+        <c.tipi constraint="Officials" id="officialsPanel">
+           <l.border>
+              <c.gridpanel constraint="North:200" columnWidth="'100 200 100 200'" id="clubOfficialsPanel" border="{border:/titled-Clubofficials}" service="matchform/ProcessGetClubOfficials">
+                  <c.label text="'Clubscheidsrechter'" id="refereeLabel" /> 
+                  <c.property showlabel="false" propertyname="'/ClubOfficials/RefereeName'" /> 
+                  <c.label text="'Wedstrijdcoordinator'" id="matchCoordinatorLabel" />
+                  <c.property showlabel="false" propertyname="'/ClubOfficials/MatchCoordinatorName'" />
+                  <c.label text="'Assistent-scheids thuisteam'" id="assistentHomeLabel" />
+                  <c.property id="assistentHome" showlabel="false" propertyname="'/ClubOfficials/HomeAssistentName'" />
+                  <c.label text="'Assistent-scheids uitteam'" id="assistentAwayLabel" />
+                  <c.property id="assistentAway" showlabel="false" propertyname="'/ClubOfficials/AwayAssistentName'" />
+              </c.gridpanel>
+              <c.tipitable headervisible="false" constraint="Center" messagepath="'MatchOfficial'" service="matchform/ProcessQueryMatchOfficials">
+                      <column label="'Naam'" name="OfficialName" size="150" />
+                      <column label="'Relatiecode'" name="PersonId" size="100" />
+                      <column label="'Rol'" name="OfficialType" size="260" />
+                      <column label="'Status'" name="Status" size="150" />
+                      <remarks />
+               </c.tipitable>
+           </l.border>
+        </c.tipi>
+        <!-- tab: match events -->
+        <c.tipitable headervisible="false" constraint="Wedstrijdverloop" id="dwfMatchEventsTable" messagepath="'MatchEvent'" service="match/events/ProcessGetMatchEvents">
+              <column label="'Deelnemer'" name="FullName" size="205" />
+
+
+              <column label="'Relatiecode'" name="PersonId" size="100" />
+              <column label="'Club'" name="OrganizationName" size="80" />
+              <column label="'Team'" name="TeamName" size="80" />
+              <column label="'Periode'" name="Period" size="130" />
+              <column label="'Type gebeurtenis'" name="TypeOfEvent" size="130" />
+              <remarks />
+        </c.tipitable>
+        <!-- tab: vastleggen -->
+        <c.tipi constraint="Vastleggen" id="dwfConfirmTab">
+           <l.border>
+                <c.gridpanel constraint="North:150" columnWidth="'170 290 420'" id="northPanel">
+                     <!--  score panel for NON-mandatory goaltakers matches -->
+                     <c.gridpanel columnWidth="'100 50 50'" border="{border:/titled-Scoreverloop}" id="scorePanel" service="matchform/ProcessQueryMatchForm">
+                         <onLoad>
+                             <setDirection direction="'out'" property="{propertyref:/matchform/ProcessQueryMatchForm:/MatchForm/HomeScore}" />
+                             <setDirection direction="'out'" property="{propertyref:/matchform/ProcessQueryMatchForm:/MatchForm/AwayScore}" />
+                             <block expression="{system:/navajo.globals.DefaultSport} == 'KORFBAL'">
+                                 <setValue from="'Strafworpen'" to="{attributeref:/./penaltyLabel:text}" />
+                             </block>
+                             <block expression="{system:/navajo.globals.DefaultSport} == 'HOCKEY'">
+                                 <setValue from="'Strafballen'" to="{attributeref:/./penaltyLabel:text}" />
+                             </block>
+                             <!-- only TROPHY competitions and certain competitiontypes can fill in penalties -->
+                            <block condition="{property:/matchform/ProcessQueryMatchForm:/MatchDetails/CompetitionKind} != 'TROPHY_COMPETITION' AND {property:/matchform/ProcessQueryMatchForm:/MatchDetails/OptionalPenaltyTakersCategory} == false">
+                                 <setDirection direction="'out'" property="{propertyref:/matchform/ProcessQueryMatchForm:/MatchForm/HomePenaltyShots}" />
+                                 <setDirection direction="'out'" property="{propertyref:/matchform/ProcessQueryMatchForm:/MatchForm/AwayPenaltyShots}" />
+                             </block>
+                             <!-- if the logged in club is not the same as the homeclub of the matchform, disable results properties -->
+                             <block expression="{property:/matchform/ProcessQueryMatchForm:/MatchForm/MatchRole} != 'HOMECLUB'">
+                                 <setDirection direction="'out'" property="{propertyref:/matchform/ProcessQueryMatchForm:/MatchForm/HomeScore}" />
+                                 <setDirection direction="'out'" property="{propertyref:/matchform/ProcessQueryMatchForm:/MatchForm/HomePenaltyShots}" />
+                                 <setDirection direction="'out'" property="{propertyref:/matchform/ProcessQueryMatchForm:/MatchForm/AwayScore}" />
+                                 <setDirection direction="'out'" property="{propertyref:/matchform/ProcessQueryMatchForm:/MatchForm/AwayPenaltyShots}" />
+                             </block>
+                         </onLoad>
+                         <c.label text="''" />
+                         <c.label text="'Thuis'"  />
+                         <c.label text="'Uit'" />
+                         <c.label text="'Doelpunten'" />
+                         <c.property editable="false" id="HomeScore" showlabel="false" propertyname="'/MatchForm/HomeScore'" />
+                         <c.property id="AwayScore" showlabel="false" propertyname="'/MatchForm/AwayScore'" />
+                         <c.label id="penaltyLabel" text="'Strafschoppen'" />
+                         <c.property id="HomePenaltyShots" showlabel="false" propertyname="'/MatchForm/HomePenaltyShots'" />
+                         <c.property id="AwayPenaltyShots" showlabel="false" propertyname="'/MatchForm/AwayPenaltyShots'"  />
+                     </c.gridpanel>
+                     
+                     <c.gridpanel id="matchStatus" border="{border:/titled-Wedstrijdstatus}" service="matchform/ProcessQueryMatchForm" columnWidth="'120 150'">
+                          <onLoad>
+                              <setDirection direction="'out'" property="{propertyref:/matchform/ProcessQueryMatchForm:/MatchForm/Status}" />
+                              <setDirection direction="'out'" property="{propertyref:/matchform/ProcessQueryMatchForm:/MatchForm/DisciplineStatus}" />
+                              <block expression="{property:/matchform/ProcessQueryMatchForm:/MatchForm/Status} == 'SUSPENDED'">
+                                  <set element="{attributeref:/~/myTabs/dwfConfirmTab/northPanel/matchStatus/DisciplineRemarks:visible}" value="true" />
+                                  <set element="{attributeref:/~/myTabs/dwfConfirmTab/northPanel/matchStatus/DisciplineRemarksLabel:visible}" value="true" />
+                                  <set element="{attributeref:/~/myTabs/dwfConfirmTab/northPanel/matchStatus/DisciplinePeriod:visible}" value="true" />
+                                  <set element="{attributeref:/~/myTabs/dwfConfirmTab/northPanel/matchStatus/DisciplinePeriodLabel:visible}" value="true" />
+                                  <set element="{attributeref:/~/myTabs/dwfConfirmTab/northPanel/matchStatus/DisciplineOffsetTime:visible}" value="true" />
+                                  <set element="{attributeref:/~/myTabs/dwfConfirmTab/northPanel/matchStatus/DisciplineOffsetTimeLabel:visible}" value="true" />
+                                  <set element="{attributeref:/~/myTabs/dwfConfirmTab/northPanel/matchStatus/DisciplineStatus:visible}" value="true" />
+                                  <set element="{attributeref:/~/myTabs/dwfConfirmTab/northPanel/matchStatus/DisciplineStatusLabel:visible}" value="true" />
+                               </block>
+                               <block expression="{property:/matchform/ProcessQueryMatchForm:/MatchForm/Status} != 'SUSPENDED'">
+                                  <setSelectedValue value="'-1'" property="{propertyref:/matchform/ProcessQueryMatchForm:/MatchForm/DisciplinePeriod}" />
+                                  <setSelectedValue value="'-1'" property="{propertyref:/matchform/ProcessQueryMatchForm:/MatchForm/DisciplineStatus}" />
+                                  <setValue from="''" to="{propertyref:/matchform/ProcessQueryMatchForm:/MatchForm/DisciplineOffsetTime}" />
+                                  <set element="{attributeref:/~/myTabs/dwfConfirmTab/northPanel/matchStatus/DisciplineRemarks:visible}" value="false" />
+                                  <setValue from="''" to="{propertyref:/matchform/ProcessQueryMatchForm:/MatchForm/DisciplineRemarks}" />
+                                </block>
+                         </onLoad>
+                         <c.label id="StatusLabel" text="'Status'"/> 
+                         <c.property id="Status" showlabel="false" propertyname="'/MatchForm/Status'" width="140" />
+                         <c.label id="DisciplineRemarksLabel" text="'Stakingsreden'" visible="false"/> 
+                         <c.property id="DisciplineRemarks" showlabel="false" width="140" propertyname="'/MatchForm/DisciplineRemarks'" visible="false" />
+                         <c.label id="DisciplinePeriodLabel" text="'Periode'" visible="false"/> 
+                         <c.property id="DisciplinePeriod" showlabel="false" width="140" propertyname="'/MatchForm/DisciplinePeriod'" visible="false" />
+                         <c.label id="DisciplineOffsetTimeLabel" text="'Minuut'" visible="false"/> 
+                         <c.property id="DisciplineOffsetTime" showlabel="false" width="140" propertyname="'/MatchForm/DisciplineOffsetTime'" visible="false" />
+                         <c.label id="DisciplineStatusLabel" text="'Reden'" visible="false"/> 
+                         <c.property id="DisciplineStatus" showlabel="false" propertyname="'/MatchForm/DisciplineStatus'" width="140" visible="false"/>
+                         <c.label id="TempCancelledLabel" text="'Tijdelijk gestaakt'"/> 
+                         <c.property id="TempCancelled" showlabel="false" propertyname="'/MatchForm/TempCancelled'"/>
+                         <c.label id="TempCancelledRemarksLabel" text="'Reden'"  /> 
+                         <c.property id="TempCancelledRemarks" showlabel="false" propertyname="'/MatchForm/TempCancelledRemarks'" width="140"  />
+                     </c.gridpanel>
+                     <c.gridpanel id="authorizationPanel" border="{border:/titled-Autorisatie}" service="matchform/InitUpdateAuthorization" columnWidth="'140 100 40'">
+                         <onLoad>
+                            <!-- you can set these fields only once: after saving them, disable them -->
+                            <setDirection direction="'out'" property="{propertyref:/matchform/InitUpdateAuthorization:/MatchForm/HomeTeamAuthorized}" />
+                            <button.attribute path="{component:/./homeTeamAuthorizedBtn}" enabled="false" />
+                            <setDirection direction="'out'" property="{propertyref:/matchform/InitUpdateAuthorization:/MatchForm/AwayTeamAuthorized}" />
+                            <button.attribute path="{component:/./awayTeamAuthorizedBtn}" enabled="false" />
+                            <block condition="{property:/matchform/InitUpdateAuthorization:/MatchForm/OfficialAuthorized}">
+                               <setDirection direction="'out'" property="{propertyref:/matchform/InitUpdateAuthorization:/MatchForm/OfficialAuthorized}" />
+                               <setDirection direction="'out'" property="{propertyref:/matchform/InitUpdateAuthorization:/MatchForm/OfficialPassword}" />
+                               <button.attribute path="{component:/./officialAuthorizedBtn}" enabled="false" />
+                            </block>
+                         </onLoad>
+                         <c.label text="'Thuisteam akkoord?'" />
+                         <c.property id="homeTeamAuthorized" showlabel="false" propertyname="'/MatchForm/HomeTeamAuthorized'" width="90" />
+                         <c.button id="homeTeamAuthorizedBtn" icon="{resource:/icons/disk_blue.png}" text="''">
+                            <onActionPerformed>
+                            </onActionPerformed>
+                         </c.button>
+                         <c.label text="'Uitteam akkoord?'" />
+                         <c.property id="awayTeamAuthorized" showlabel="false" propertyname="'/MatchForm/AwayTeamAuthorized'" width="90" />
+                         <c.button id="awayTeamAuthorizedBtn" icon="{resource:/icons/disk_blue.png}" text="''">
+                            <onActionPerformed>
+                            </onActionPerformed>
+                         </c.button>
+                         <c.label text="'Scheidsrechter akkoord?'" />
+                         <c.property id="officialAuthorized" showlabel="false" propertyname="'/MatchForm/OfficialAuthorized'" width="90" />
+                         <c.button id="officialAuthorizedBtn" icon="{resource:/icons/disk_blue.png}" text="''">
+                            <onActionPerformed>
+                               <block condition="{property:/matchform/InitUpdateAuthorization:/MatchForm/OfficialId} == null">
+                                  <showInfo text="'Geef a.u.b. onder het tabblad Officials aan wie de scheidsrechter is.'" />
+                                  <breakEvent />
+                               </block>
+                               <block condition="{property:/matchform/InitUpdateAuthorization:/MatchForm/OfficialAuthorized} == '0'">
+                                  <showInfo text="'Om als scheidsrechter het wedstrijdformulier goed te keuren, moet u hiernaast het vinkje aanzetten'" />
+                               </block>
+                               <block condition="{property:/matchform/InitUpdateAuthorization:/MatchForm/OfficialAuthorized} == '1'">
+                                  <set value="true" element="{propertyref:/matchform/InitUpdateAuthorization:/MatchForm/SkipAuthorization}" />
+                                  <callService input="{navajo:/matchform/InitUpdateAuthorization}" service="'matchform/ProcessUpdateAuthorization'" />
+                                  <setDirection direction="'out'" property="{propertyref:/matchform/InitUpdateAuthorization:/MatchForm/OfficialAuthorized}" />
+                                  <setDirection direction="'out'" property="{propertyref:/matchform/InitUpdateAuthorization:/MatchForm/OfficialId}" />
+                                  <set value="''" element="{propertyref:/matchform/InitUpdateAuthorization:/MatchForm/OfficialPassword}" />
+                                  <setDirection direction="'out'" property="{propertyref:/matchform/InitUpdateAuthorization:/MatchForm/OfficialPassword}" />
+                                  <set value="true" element="{propertyref:/matchform/ProcessQueryMatchForm:/MatchForm/OfficialAuthorized}" />
+                                  <button.attribute path="{component:/.}" enabled="false" />
+                                  <showInfo text="'Het wedstrijdformulier is goedgekeurd.'" />
+                                </block>
+                            </onActionPerformed>
+                         </c.button>
+                     </c.gridpanel>
+                </c.gridpanel>
+                     
+                <c.tipitable constraint="Center" headervisible="false" id="dwfMatchEventReplacementsTable" messagepath="'MatchEventReplacements'" service="matchform/ProcessGetMatchSummary">
+                             <column label="'Relatiecode'" name="PersonId" size="100" />
+                             <column label="'Naam'" name="FullName" size="400" />
+                             <column label="'Team'" name="Team" size="100" />
+                             <column label="'Periode'" name="Period" size="100" />
+                             <remarks />
+                </c.tipitable>
+                <c.tipitable constraint="South:100" headervisible="false" id="dwfMatchEventCardsTable" messagepath="'MatchEventCards'" service="matchform/ProcessGetMatchSummary">
+                          <column label="'Relatiecode'" name="PersonId" size="100" />
+                          <column label="'Naam'" name="Name" size="200" />
+                          <column label="'Type gebeurtenis'" name="TypeOfEvent" size="100" />
+                          <column label="'Tuchtcode'" name="ChargeCodeId" size="120" />
+                          <column label="'Team'" name="Team" size="100" />
+                          <column label="'Periode'" name="Period" size="100" />
+                          <remarks />
+                </c.tipitable>
+            </l.border>
+         </c.tipi>
+    </c.tabs>
+</l.border>
+</d.window>
+</tid>

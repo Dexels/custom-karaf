@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<tid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" errorhandler="error" xsi:noNamespaceSchemaLocation="tipi.xsd">
+    <d.window title="'Telefoonboek officials'" closable="true" h="550" name="officialPhonebookWindow" resizable="true" movable="true" w="900" x="20" y="50">
+        <onWindowClosed>
+            <setValue from="true" to="{attributeref://init/main/current:visible}"/>
+        </onWindowClosed>
+        <onInstantiate>
+            <callService service="'officialportal/InitSearchOfficialAddressBook'"/>
+        </onInstantiate>
+        <l.border>
+            <c.gridpanel constraint="North:160" id="naw" border="{border:/titled-Algemene gegevens}" columnWidth="'150 250'" service="officialportal/InitSearchOfficialAddressBook">
+                <c.label text="'Achternaam'"/>
+                <c.property propertyname="'/SearchCriteria/Lastname'" showlabel="false" width="150">
+                    <onEnter>
+                        <button.fireAction path="{component:/../searchButton}"/>
+                    </onEnter>
+                </c.property>
+                <c.label text="'District'"/>
+                <c.property propertyname="'/SearchCriteria/DistrictId'" showlabel="false">
+                    <onEnter>
+                        <button.fireAction path="{component:/../searchButton}"/>
+                    </onEnter>
+                </c.property>
+                <c.label text="'Niveau'"/>
+                <c.property propertyname="'/SearchCriteria/OfficialLevel'" showlabel="false">
+                    <onEnter>
+                        <button.fireAction path="{component:/../searchButton}"/>
+                    </onEnter>
+                </c.property>
+                <c.button id="searchButton" text="'Zoek'" tooltip="'Enkele letters zijn voldoende'"  defaultButton="true">
+                    <onActionPerformed>
+                        <block expression="Size({property:/officialportal/InitSearchOfficialAddressBook:SearchCriteria/Lastname})&lt;=0">
+                            <showError text="'Voer a.u.b. een zoekterm in!'"/>
+                            <breakEvent/>
+                        </block>
+                        <callService service="'officialportal/ProcessSearchOfficialAddressBook'" input="{navajo:/officialportal/InitSearchOfficialAddressBook}"/>
+                    </onActionPerformed>
+                </c.button>
+            </c.gridpanel>
+            <c.tipitable headervisible="true" constraint="Center" id="officialTable" messagepath="'Officials'" service="officialportal/ProcessSearchOfficialAddressBook" rowsPerPage="15">
+                <column name="FullName" label="'Naam'" editable="false" size="120"/>
+                <column name="Telephone" label="'Telefoon'" editable="false" size="100"/>
+                <!--<column name="Mobile" label="'Mobiel'" editable="false" size="100"/>-->
+                <column name="Email" label="'Email'" editable="false" size="200"/>
+                <column name="OfficialDescription" label="'Soort'" editable="false" size="130"/>
+                <column name="OfficialLevel" label="'Niveau'" editable="false" size="100"/>
+                <column name="DistrictName" label="'District'" editable="false" size="130"/>
+                <onReport>
+                    <openBinary binary="{event:/report}" newWindow="true"/>
+                </onReport>
+            </c.tipitable>
+            <c.toolbar constraint="South:50">
+                <c.button text="'Stuur email'" tooltip="'Stel een bericht op'">
+                    <onActionPerformed>
+                        <block expression="{attribute:/~/officialTable:selectedIndex}!=-1">
+                            <openBrowser url="'mailto:'+GetPropertyValue({attribute:/~/officialTable:selectedMessage},'Email')" newWindow="false"/>
+                        </block>
+                        <block expression="{attribute:/~/officialTable:selectedIndex}==-1">
+                            <showError text="'Selecteer a.u.b eerst een official!'"/>
+                        </block>
+                    </onActionPerformed>
+                </c.button>
+                <c.button text="'Aanstellingen'" tooltip="'Vraag aanstellingen op'">
+                    <onActionPerformed>
+                        <block expression="{attribute:/~/officialTable:selectedIndex}!=-1">
+                            <callService service="'officialportal/InitQueryActivities'" />
+                            <setValue from="true" to="{propertyref:/officialportal/InitQueryActivities:/PersonActivities/ShowPreviousSeason}" />
+                            <setValue from="{property:/officialportal/ProcessLogin:/UserData/UserName}" to="{propertyref:/officialportal/InitQueryActivities:/PersonActivities/CallerPersonId}" />
+                            <setValue from="true" to="{propertyref:/officialportal/InitQueryActivities:/PersonActivities/IgnoreConcept}" />
+                            <setValue from="GetPropertyValue({attribute:/~/officialTable:selectedMessage},'PersonId')" to="{propertyref:/officialportal/InitQueryActivities:/PersonActivities/PersonId}" />
+                            <instantiate force="true" id="'otherOfficialActivities'" name="'otherPersonActivityList'" location="{component://init/main}" />
+                            <setValue to="{attributeref://init/main/otherOfficialActivities:title}" from="'Aanstellingen van ' + GetPropertyValue({attribute:/~/officialTable:selectedMessage},'FullName')"/>
+                            <callService input="{navajo:/officialportal/InitQueryActivities}" service="'officialportal/ProcessQueryActivities'" />
+                        </block>
+                        <block expression="{attribute:/~/officialTable:selectedIndex}==-1">
+                            <showError text="'Selecteer a.u.b eerst een official!'"/>
+                        </block>
+                    </onActionPerformed>
+                </c.button>
+            </c.toolbar>
+        </l.border>
+    </d.window>
+</tid>

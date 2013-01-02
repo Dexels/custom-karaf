@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<tid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" errorhandler="error" xsi:noNamespaceSchemaLocation="tipi.xsd">
+	<d.tipiquestiongroup name="QuestionGroup" subComponent="'Pnl/Scrl/Pnl/Questions'" subConstraint="'align:left top'"
+		descriptionComponent="'Pnl/Description'" background="{color:/#ffffff}">
+		<c.panel id="Pnl">
+			<l.border>
+				<!-- <component-instance id="Description" class="property" propertyname="Description" showlabel="false" memoRowCount="4" 
+					memoColumnCount="50" verticalScrolls="false" horizontalScrolls="false" constraint="height:80;width:800;align:left top" horizontalScrolls="false" 
+					verticalScrolls="false"/> -->
+				<c.scroll id="Scrl" constraint="Center">
+					<c.panel id="Pnl" columnWidth="'760'">
+						<l.border>
+							<c.column id="Questions" constraint="Center" />
+						</l.border>
+					</c.panel>
+				</c.scroll>
+			</l.border>
+
+		</c.panel>
+	</d.tipiquestiongroup>
+</tid>

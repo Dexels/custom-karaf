@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<tid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" errorhandler="error" xsi:noNamespaceSchemaLocation="tipi.xsd">
+	<d.window closable="true" h="130" name="knhbDownloadWindow" title="'Speeldagen KNHB'" resizable="true" movable="true" w="350" x="200" y="100" >
+		<l.border>
+			<c.gridpanel constraint="Center" columnWidth="'180'" border="{border:/titled-Speeldagen}">
+				<c.button style="'LinkButton'" text="'KNHB Speeldagen 2010-2011 (excel)'">
+					<onActionPerformed>
+						<openBrowser url="'resource/Speeldagen 2010-2011 v.1.9.xls'"/>						
+					</onActionPerformed>
+				</c.button>
+			</c.gridpanel>
+			<c.tipi constraint="South:0"/>
+		</l.border>
+	</d.window>
+</tid>

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<tid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" errorhandler="error" xsi:noNamespaceSchemaLocation="tipi.xsd">
+    <d.window closable="true" h="525" name="matchList" resizable="true" title="'Wedstrijden'" movable="true" w="800" x="20" y="60">
+        <onInstantiate>
+            <callService service="'officialportal/InitGetReimbursementInfo'"/>
+            <callService service="'officialportal/InitQueryMatch'"/>
+            <callService service="'officialportal/InitGetMatchOfficials'"/>
+        </onInstantiate>
+        <l.border>
+            <c.toolbar id="toolbar" constraint="North:50">
+                <c.button text="'<<'" tooltip="'Vorige week'" visible="{propertyref:/external/competition/InitCompetitionData:/SearchCriteria/RoundFrom} == null OR !CheckInteger({property:/external/competition/InitCompetitionData:/SearchCriteria/RoundFrom})">
+                    <onActionPerformed>
+                        <!--<block expression="{system:/union} == 'KNVB'">
+                            <showInfo text="'Het is alleen mogelijk om wedstrijden van deze week op te vragen.'"/>
+                            <breakEvent/>
+                        </block>-->
+                        <block expression="{navajo:/external/competition/ProcessGetCompetitionProgram} != null">
+                            <setValue to="{propertyref:/external/competition/ProcessGetCompetitionProgram:/SearchCriteria/Prev}" from="true"/>
+                            <setValue to="{propertyref:/external/competition/ProcessGetCompetitionProgram:/SearchCriteria/Next}" from="false"/>
+                            <callService service="'external/competition/ProcessGetCompetitionProgram'" input="{navajo:/external/competition/ProcessGetCompetitionProgram}"/>
+                        </block>
+                    </onActionPerformed>
+                </c.button>
+                <c.button text="'Deze week'" tooltip="'Deze week'" visible="{propertyref:/external/competition/InitCompetitionData:/SearchCriteria/RoundFrom} == null OR !CheckInteger({property:/external/competition/InitCompetitionData:/SearchCriteria/RoundFrom})">
+                    <onActionPerformed>
+                        <block expression="{navajo:/external/competition/ProcessGetCompetitionProgram} != null">
+                            <setValue to="{propertyref:/external/competition/ProcessGetCompetitionProgram:/SearchCriteria/Prev}" from="false"/>
+                            <setValue to="{propertyref:/external/competition/ProcessGetCompetitionProgram:/SearchCriteria/Next}" from="false"/>
+                            <setValue to="{propertyref:/external/competition/ProcessGetCompetitionProgram:/SearchCriteria/WeekOffset}" from="0"/>
+                            <callService service="'external/competition/ProcessGetCompetitionProgram'" input="{navajo:/external/competition/ProcessGetCompetitionProgram}"/>
+                        </block>
+                    </onActionPerformed>
+                </c.button>
+                <c.button text="'>>'" tooltip="'Volgende week'" visible="{propertyref:/external/competition/InitCompetitionData:/SearchCriteria/RoundFrom} == null OR !CheckInteger({property:/external/competition/InitCompetitionData:/SearchCriteria/RoundFrom})">
+                    <onActionPerformed>
+                        <!--<block expression="{system:/union} == 'KNVB'">
+                            <showInfo text="'Het is alleen mogelijk om wedstrijden van deze week op te vragen.'"/>
+                            <breakEvent/>
+                        </block>-->
+                        <block expression="{navajo:/external/competition/ProcessGetCompetitionProgram} != null">
+                            <setValue to="{propertyref:/external/competition/ProcessGetCompetitionProgram:/SearchCriteria/Prev}" from="false"/>
+                            <setValue to="{propertyref:/external/competition/ProcessGetCompetitionProgram:/SearchCriteria/Next}" from="true"/>
+                            <callService service="'external/competition/ProcessGetCompetitionProgram'" input="{navajo:/external/competition/ProcessGetCompetitionProgram}"/>
+                        </block>
+                    </onActionPerformed>
+                </c.button>
+            </c.toolbar>
+            <c.tipitable constraint="Center" id="table" messagepath="'CompetitionResults'" service="external/competition/ProcessGetCompetitionProgram" rowsPerPage="200">
+                <column name="ClassName" label="'Klasse'" editable="false" size="125"/>
+                <column name="PoolName" label="'Poule'" editable="false" size="125"/>
+                <column name="MatchDate" label="'Datum'" editable="false" size="70"/>
+                <column name="MatchTime" label="'Tijd'" editable="false" size="50"/>
+                <column name="HomeTeamName" label="'Thuis'" editable="false" size="130"/>
+                <column name="AwayTeamName" label="'Uit'" editable="false" size="130"/>
+                <!--<column name="HomeResult" label="'Thuis'" editable="false" size="50"/>
+                <column name="AwayResult" label="'Uit'" editable="false" size="50"/>-->
+            </c.tipitable>
+            <c.toolbar id="toolbar" constraint="South:50">
+                <c.button id="accommodation" text="'Accommodatiegegevens'" tooltip="'bekijk accommodatiedetails'">
+                    <onActionPerformed>
+                        <block expression="{attribute:/../../table:selectedIndex} == -1">
+                            <showInfo text="'Selecteer a.u.b. een activiteit.'"/>
+                        </block>
+                        <block expression="{attribute:/../../table:selectedIndex} != -1">
+                            <block expression="GetPropertyValue({attribute:/../../table:selectedMessage},'FacilityId') == null">
+                                <showInfo text="'Van deze activiteit zijn geen accommodatiedetails beschikbaar.'"/>
+                            </block>
+                   <!--          <setValue from="{property:/../../table:selectedMessage:OfficialId}" to="{propertyref:/officialportal/InitGetReimbursementInfo:/AssignmentData/OfficialId}"/>
+                         -->    <setValue from="{property:/../../table:selectedMessage:MatchId}" to="{propertyref:/officialportal/InitGetReimbursementInfo:/AssignmentData/MatchId}"/>
+                            <callService input="{navajo:/officialportal/InitGetReimbursementInfo}" service="'officialportal/ProcessGetReimbursementInfo'"/>
+                            <instantiate force="true" id="'currentDetail'" name="'facilityDetailWindow'" location="{component://init/main}"/>
+                            <reloadNavajo service="{navajo:/officialportal/ProcessGetReimbursementInfo}"/>
+                        </block>
+                    </onActionPerformed>
+                </c.button>
+                <c.button id="match" text="'Wedstrijdgegevens'" tooltip="'bekijk wedstrijddetails'">
+                    <onActionPerformed>
+                        <block expression="{attribute:/../../table:selectedIndex} == -1">
+                            <showInfo text="'Selecteer a.u.b. een activiteit.'"/>
+                        </block>
+                        <block expression="{attribute:/../../table:selectedIndex} != -1">
+                            <block expression="GetPropertyValue({attribute:/../../table:selectedMessage},'ExternalMatchId') == null">
+                                <showInfo text="'Van deze activiteit zijn geen wedstrijddetails beschikbaar.'"/>
+                            </block>
+                            <block expression="GetPropertyValue({attribute:/../../table:selectedMessage},'ExternalMatchId') != null">
+                                <setValue from="{property:/../../table:selectedMessage:InternalMatchId}" to="{propertyref:/officialportal/InitQueryMatch:/Match/MatchId}"/>
+                                <setValue from="{global:/username}" to="{propertyref:/officialportal/InitQueryMatch:/Match/PersonId}"/>
+                                <setValue from="{property:/../../table:selectedMessage:InternalMatchId}" to="{propertyref:/officialportal/InitGetMatchOfficials:/MatchData/MatchId}"/>
+                                <setValue from="{global:/username}" to="{propertyref:/officialportal/InitGetMatchOfficials:/MatchData/PersonId}"/>
+                                <callService input="{navajo:/officialportal/InitQueryMatch}" service="'officialportal/ProcessQueryMatch'"/>
+                                <instantiate force="true" id="'currentDetail'" name="'matchDetailWindow'" location="{component://init/main}"/>
+                                <callService input="{navajo:/officialportal/InitGetMatchOfficials}" service="'officialportal/ProcessGetMatchOfficials'"/>
+                                <setValue from="{property:/../../table:selectedMessage:HomeTeamName} + '-' + {property:/../../table:selectedMessage:AwayTeamName}" to="{attributeref://init/main/currentDetail:title}"/>
+                                <reloadNavajo service="{navajo:/officialportal/ProcessQueryMatch}"/>
+                            </block>
+                        </block>
+                    </onActionPerformed>
+                </c.button>
+            </c.toolbar>
+        </l.border>
+    </d.window>
+</tid>

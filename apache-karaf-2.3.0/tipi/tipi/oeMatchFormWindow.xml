@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<tid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" errorhandler="error" xsi:noNamespaceSchemaLocation="tipi.xsd">
+    <d.window name="oeMatchFormWindow" x="170" y="50" background="{color:/#ffffff}" closable="true" visible="true" h="720" w="1020">
+        <l.border>
+            <c.tipitabbedquestionlist constraint="Center" id="oeFormQuestions" questionDefinitionName="'QuestionLayout'" questionGroupDefinitionName="'QuestionGroup'"
+                    messagePath="'QuestionList@0/Group'" service="official/evalform/ProcessQueryOfficialEvalForm" >
+            </c.tipitabbedquestionlist>
+            <c.toolbar id="oeMatchFormToolbar" constraint="South:52" background="{color:/#FFFFFF}">
+                <c.button visible="!{property:/official/evalform/ProcessQueryOfficialEvalForm:/ObjectForm/ReadOnly}" id="oeSaveBtn" text="'Opslaan'" tooltip="'opslaan wedstrijdformulier'" constraint="align:right middle">
+                    <onActionPerformed>
+                        <performTipiMethod name="'flatten'" serviceName="'official/evalform/ProcessUpdateOfficialEvalForm'" path="{component:/~/oeFormQuestions}" />
+                        <showInfo text="'Het formulier is opgeslagen'"/>
+                    </onActionPerformed>
+                </c.button>
+                <c.button visible="!{property:/official/evalform/ProcessQueryOfficialEvalForm:/ObjectForm/ReadOnly}" id="oeOkBtn" text="'Vastleggen'" tooltip="'opslaan gebruikersgegevens'" constraint="align:right middle">
+                    <onActionPerformed>
+                        <block expression="!{attribute:/~/oeFormQuestions:valid}">
+                            <showInfo text="'Let op: Niet alle (verplichte) vragen zijn ingevuld!'" />
+                            <breakEvent />
+                        </block>
+                        <showQuestion text="'Weet u het zeker?'"/>
+                        <performTipiMethod name="'flatten'" serviceName="'official/evalform/ProcessUpdateOfficialEvalForm'" path="{tipi:/~/oeFormQuestions}" final="true" />
+                        <setValue from="false" to="{attributeref:/~:visible}" />
+                        <showInfo text="'Het formulier is vastgelegd'"/>
+                        <dispose path="{component:/~}" />
+                    </onActionPerformed>
+                </c.button>
+                <c.button id="oeReportBtn" visible="true" text="'Print formulier'" constraint="align:right middle; padding:5 5 5 5">
+                        <onActionPerformed>
+                                <callService service="'official/evalform/InitUpdateOfficialEvalForm'" cached="true" />
+                                <setValue from="{property:/official/evalform/ProcessQueryOfficialEvalForm:ObjectForm/FormId}" to="{propertyref:/official/evalform/InitUpdateOfficialEvalForm:Form/FormId}" />
+                                <setValue from="{property:/officialportal/ProcessQueryMatch:Match/MatchId}" to="{propertyref:/official/evalform/InitUpdateOfficialEvalForm:Form/MatchId}" />
+                                <setValue from="{property:/official/evalform/ProcessQueryOfficialEvalForm:ObjectForm/VisitedOfficialId}" to="{propertyref:/official/evalform/InitUpdateOfficialEvalForm:Form/VisitedOfficialId}" />
+                                <setValue from="{property:/official/evalform/ProcessQueryOfficialEvalForm:ObjectForm/OfficialId}" to="{propertyref:/official/evalform/InitUpdateOfficialEvalForm:Form/OfficialId}" />
+                                <setValue from="{property:/official/evalform/ProcessQueryOfficialEvalForm:ObjectForm/ObjectFormId}" to="{propertyref:/official/evalform/InitUpdateOfficialEvalForm:Form/ObjectFormId}" />
+                                <setValue from="{global:/username}" to="{propertyref:/official/evalform/InitUpdateOfficialEvalForm:Form/AuthorId}" />
+                                <callService service="'official/evalform/GeneratePDFReport'" input="{navajo:/official/evalform/InitUpdateOfficialEvalForm}" />
+                                <openBinary binary="{property:/official/evalform/GeneratePDFReport:NewDocument/Data}" newWindow="true"/>
+                        </onActionPerformed>
+                </c.button>
+            </c.toolbar>
+        </l.border>
+    </d.window>
+</tid>

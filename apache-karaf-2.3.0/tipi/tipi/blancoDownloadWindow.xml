@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<tid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" errorhandler="error" xsi:noNamespaceSchemaLocation="tipi.xsd">
+    <d.window closable="true" h="130" name="blancoDownloadWindow" title="'Blanco formulieren'" resizable="true" movable="true" w="350" x="200" y="100" >
+        <l.border>
+            <c.gridpanel constraint="Center" columnWidth="'240'">
+                <c.button style="'link'" text="'Blanco veld (scheidsrechter)'">
+                    <onActionPerformed>
+                        <openBinary binary="{resource:/veld.pdf}" newWindow="true"/>
+                    </onActionPerformed>
+                </c.button>
+                <c.button style="'link'" text="'Blanco veld (assistent-scheidsrechter)'">
+                    <onActionPerformed>
+                        <openBinary binary="{resource:/veldasr.pdf}" newWindow="true"/>
+                    </onActionPerformed>
+                </c.button>
+                <c.button style="'link'" text="'Blanco zaal (scheidsrechter)'">
+                    <onActionPerformed>
+                        <openBinary binary="{resource:/zaal.pdf}" newWindow="true"/>
+                    </onActionPerformed>
+                </c.button>
+                <c.button style="'link'" text="'Blanco zaal Eredivisie (scheidsrechter)'">
+                    <onActionPerformed>
+                        <openBinary binary="{resource:/zaaled.pdf}" newWindow="true"/>
+                    </onActionPerformed>
+                </c.button>
+            </c.gridpanel>
+        </l.border>
+    </d.window>
+</tid>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<tid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" errorhandler="error" xsi:noNamespaceSchemaLocation="tipi.xsd">
+    <d.window closable="true" h="525" name="chargeDocumentResultWindow" resizable="true" title="'Bijzondere tuchtzaken en excessen'" movable="true" w="980" x="10" y="60">
+		<onLoad>
+			<dumpNavajo input="{event:/navajo}"/>
+		</onLoad>
+        <l.border>
+            <c.tipitable id="table" constraint="Center" messagepath="'ResultSentence'" service="discipline/ProcessSearchDisciplineDocuments">
+                <column name="MatchDescription" label="'Wedstrijd'" editable="false" size="240"/>
+                <column name="MatchDate" label="'Datum'" editable="false" size="70"/>
+                <column name="OrganizationId" label="'Ver. code'" editable="false" size="70"/>
+                <column name="ObjectId" label="'Rel. code Beschuldidge'" editable="false" size="70"/>
+                <column name="ObjectName" label="'Beschuldigde'" editable="false" size="80"/>
+                <column name="District" label="'District'" editable="false" size="130"/>
+                <column name="SentenceBy" label="'Uitspraak van'" editable="false" size="90"/>
+                <column name="HasDocuments" label="'Doc. aanw.?'" editable="false" size="90"/>
+                <onReport>
+                    <openBinary binary="{event:/report}" newWindow="true"/>
+                </onReport>
+            </c.tipitable>
+			<c.toolbar constraint="South">
+				<c.button text="'Toon documenten'">
+					<onActionPerformed>
+						<block  condition="GetPropertyValue({attribute:/~/table:selectedMessage},'HasDocuments')">
+							<set element="{propertyref:/InitQueryDoc:/Document/AuthorId}" value="'SENTENCE-'+GetPropertyValue({attribute:/~/table:selectedMessage},'SentenceId')"/>
+							<window.instantiate name="'chargeDocumentListWindow'" location="{component://init/main}" force="true" id="'documentList'"/>
+							<callService service="'lucene/ProcessQueryDocumentsByAuthor'" input="{navajo:/InitQueryDoc}"/>
+						</block>
+						<block  condition="! GetPropertyValue({attribute:/~/table:selectedMessage},'HasDocuments')">
+							<showInfo text="'Deze zaak heeft geen documenten'"/>
+						</block>
+					</onActionPerformed>
+				</c.button>
+			</c.toolbar>
+        </l.border>
+    </d.window>
+    
+    <tml service="InitQueryDoc">
+    	<message name="Document">
+      		<property direction="out" name="AuthorId" type="string"/>
+    	</message>
+    </tml>
+    
+
+</tid>

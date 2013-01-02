@@ -1,0 +1,31 @@
+<tid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" errorhandler="error" xsi:noNamespaceSchemaLocation="tipi.xsd">
+    <d.window closable="true" h="370" name="boAddMultiDialog" resizable="true" visible="true" title="'Datum-interval toevoegen'" movable="true" w="380" x="180" y="10">
+        <onInstantiate>
+            <callService input="{navajo:/official/ProcessGetOfficialIdFromPersonId}" service="'official/InitInsertBlackOutDayInterval'" />
+        </onInstantiate>
+        <l.border>
+            <c.gridpanel columnWidth="'320'" service="official/InitInsertBlackOutDayInterval">
+                <c.property propertyname="'/NewBlackOutDayInterval/CalendarDateFrom'" label_indent="160" />
+                <c.property propertyname="'/NewBlackOutDayInterval/CalendarDateTo'" label_indent="160" />
+                <c.property propertyname="'/NewBlackOutDayInterval/StartTime'" label_indent="160" />
+                <c.property propertyname="'/NewBlackOutDayInterval/EndTime'" label_indent="160" />
+                <c.property propertyname="'/NewBlackOutDayInterval/WeekDaySelection'" label_indent="160" />
+                <c.property propertyname="'/NewBlackOutDayInterval/Info'" label_indent="160" />
+            </c.gridpanel>
+            <c.toolbar id="toolbar" constraint="South:50">
+                <c.button text="'Opslaan'" tooltip="'opslaan en sluiten'">
+                    <onActionPerformed>
+                        <callService input="{navajo:/official/InitInsertBlackOutDayInterval}" service="'official/ProcessInsertBlackOutDayInterval'" />
+                        <callService input="{navajo:/official/ProcessGetOfficialIdFromPersonId}" service="'official/ProcessQueryBlackOutDays'" />
+                        <dispose path="{component:/~}" />
+                    </onActionPerformed>
+                </c.button>
+                <c.button text="'Annuleren'" tooltip="'annuleren'">
+                    <onActionPerformed>
+                        <dispose path="{component:/~}" />
+                    </onActionPerformed>
+                </c.button>
+            </c.toolbar>
+        </l.border>
+    </d.window>
+</tid>

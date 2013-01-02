@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<tid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" errorhandler="error" xsi:noNamespaceSchemaLocation="tipi.xsd">
+	<d.window closable="true" h="430" name="matchDetailWindow" resizable="true" movable="true" w="820" x="40" y="70">
+                 <onInstantiate>
+                    <callService service="'matchform/InitUpdateMatchForm'"/>
+                </onInstantiate>
+		<onWindowClosed>
+			<!--<setValue from="true" to="{attributeref://init/main/current:visible}" />-->
+		</onWindowClosed>
+		<l.border>
+			<c.gridpanel constraint="North:160" columnWidth="'120 300 200'" >
+				<c.label text="'Wedstrijdnummer'" />
+				<c.label text="{property:/officialportal/ProcessQueryMatch:Match/ExternalMatchId}" />
+				<c.hidden/>
+				<c.label text="'Datum'" />
+				<c.label text="FormatDate({property:/officialportal/ProcessQueryMatch:MatchData/CalendarDate},'dd MMM yyyy','nl')" />
+				<c.hidden/>
+				<c.label text="'Tijd'" />
+				<c.label text="FormatDate({property:/officialportal/ProcessQueryMatch:MatchData/StartTime}, 'HH:mm')+' - '+ FormatDate({property:/officialportal/ProcessQueryMatch:MatchData/EndTime}, 'HH:mm')" />
+				<c.hidden/>
+
+				<!--
+					<c.property showlabel="false" propertyname="'MatchData/CalendarDate'" /> <c.property showlabel="false" propertyname="'MatchData/StartTime'" /> <c.property
+					showlabel="false" propertyname="'MatchData/EndTime'" />
+				-->
+				<c.label text="'Competitie:'" />
+				<c.label
+					text="{property:/officialportal/ProcessQueryMatch:MatchData/CompetitionTypeName}+' '+{property:/officialportal/ProcessQueryMatch:MatchData/ClassName}+' '+{property:/officialportal/ProcessQueryMatch:MatchData/PoolName}" />
+				<c.hidden/>
+			    <c.label text="'DWF Rapport:'" />
+                                <c.button id="dwfPdfOpenBtn"  text="'Open PDF wedstrijdformulier'" icon="{resource:/icons/pdf_button.png}"  visible="{property:/officialportal/ProcessQueryMatch:MatchData/DWFReport} != null">
+                                        <onActionPerformed>
+                                            <openBinary binary="{property:/officialportal/ProcessQueryMatch:MatchData/DWFReport}"  newWindow="true"/>
+                                        </onActionPerformed>
+                                </c.button>
+                                <c.button id="dwfOpenBtn" tooltip="'open digitaal wedstrijdformulier'" text="'Open DWF'" visible="{property:/officialportal/ProcessQueryMatch:MatchData/DWFAvailable}">
+                                        <onActionPerformed>
+                                             <!-- temporarily set this match role to 'HOMECLUB' so we are using 1 matchform only -->
+                                             <setValue from="'HOMECLUB'" to="{propertyref:/matchform/InitUpdateMatchForm:/MatchForm/MatchRole}" />
+                                             <setValue from="{property:/officialportal/ProcessQueryMatch:MatchData/MatchId}" to="{propertyref:/matchform/InitUpdateMatchForm:/MatchForm/MatchId}" />
+                                             <instantiate force="true" id="'dwfMatchFormWindow'" location="{component://init/main}" name="'dwfMatchFormWindow'" />
+                                             <callService service="'matchform/ProcessQueryMatchForm'" input="{navajo:/matchform/InitUpdateMatchForm}" />
+                                        </onActionPerformed>
+                                </c.button>
+			</c.gridpanel>
+			<!--
+				<c.property alwaysUseLabel="true" propertyname="'FacilityData/StreetName'" showlabel="false"/> <c.property alwaysUseLabel="true"
+				propertyname="'FacilityData/AddressNumber'" showlabel="false"/> <c.hidden/> <c.property alwaysUseLabel="true" propertyname="'FacilityData/ZipCode'"
+				showlabel="false"/> <c.property alwaysUseLabel="true" propertyname="'FacilityData/City'" showlabel="false"/>
+			-->
+			<!--
+				http://maps.google.com/maps?f=d&hl=nl&geocode=&saddr=1031HN+nl&daddr=1016PM+nl http://maps.google.com/maps?hl=nl&geocode=&saddr=1031HN+nl&daddr=1016PM+nl
+			-->
+			<!--
+				<c.gridpanel border="{border:/titled-Officials}" constraint="Center"
+				columnWidth="'600'">
+			-->
+			<c.tabs id="tabs" constraint="Center">
+				<c.tipitable id="table" messagepath="'Officials'" constraint="Officials" service="officialportal/ProcessGetMatchOfficials" rowsPerPage="0">
+					<column name="Description" label="'Omschrijving'" editable="false" size="100" />
+					<column name="LastName" label="'Naam'" editable="false" size="150" />
+					<column name="AssignmentStatus" label="'Status'" editable="false" size="50" />
+					<column name="Status" label="'Opmerkingen'" editable="false" size="220" />
+					<column name="PDFReportAvailable" label="'PDF rapport beschikbaar'" editable="false" size="180" />
+					<onSelectionChanged>
+						<setValue from="GetPropertyValue({event:/selectedMessage},'PDFReportAvailable') == true" to="{attributeref:/../../toolbar/pdfOpenBtn:visible}" />
+						<setValue from="GetPropertyValue({event:/selectedMessage},'OfficialOfficialPersonId') == {global:/username}" to="{attributeref:/../../toolbar/oeOpenBtn:visible}" />
+						<setValue from="GetPropertyValue({event:/selectedMessage},'OfficialOfficialPersonId') == {global:/username}" to="{attributeref:/../../toolbar/blanco:visible}" />
+					</onSelectionChanged>
+				</c.tipitable>
+            <!--</c.gridpanel>-->
+			</c.tabs>
+			<c.toolbar id="toolbar" constraint="South:55">
+                                <c.button id="cancelOfficial" text="'Afzeggen'" tooltip="'afzegging scheidsrechter'" visible="{property:/officialportal/ProcessLogin:/Authenticated/IsOtherOfficial} AND {system:/union} == 'KNKV'" constraint="align:right middle; padding:5 5 5 5">
+                                        <onActionPerformed>
+					     <block expression="{attribute:/../../tabs/table:selectedIndex} == -1">
+						<showInfo text="'Selecteer a.u.b. een official'" />
+						<breakEvent />
+					     </block>
+                                             <setValue from="'CANCELED'" to="{propertyref:/../../tabs/table:selectedMessage:AssignmentStatus}"/>
+                                             <callService input="{navajo:/officialportal/ProcessGetMatchOfficials}" service="'officialportal/ProcessUpdateMatchOfficials'" />
+                                             <callService input="{navajo:/officialportal/InitGetMatchOfficials}" service="'officialportal/ProcessGetMatchOfficials'" />
+                                             <callService input="{navajo:/activities/InitQueryPersonActivities}" service="'official/ProcessQueryMatchAssigner'" /> 
+                                        </onActionPerformed>
+                                </c.button>
+                                <c.button id="searchOfficial" text="'Zoek scheidsrechter'" tooltip="'zoek scheidsrechter'" visible="{property:/officialportal/ProcessLogin:/Authenticated/IsOtherOfficial} AND {system:/union} == 'KNKV'" constraint="align:right middle; padding:5 5 5 5">
+                                     <onActionPerformed>
+                                          <instantiate force="true" id="'assignment'" name="'officialAssignmentList'" location="{component://init/main}" />
+                                          <callService input="{navajo:/officialportal/ProcessQueryMatch}" service="'official/InitSearchMatchOfficials'"/>
+                                          <callService input="{navajo:/official/InitSearchMatchOfficials}" service="'official/ProcessSearchMatchOfficials'"/>
+                                     </onActionPerformed>
+                                </c.button>
+				<c.button id="pdfOpenBtn" tooltip="'open formulier'" text="'Open pdf'" visible="false" constraint="align:right middle; padding:5 5 5 5">
+					<onActionPerformed>
+                                            <openBinary binary="GetPropertyValue({attribute:/../../tabs/table:selectedMessage},'PDFReport')" newWindow="true"/>
+                                        </onActionPerformed>
+                                </c.button>
+				<c.button id="oeOpenBtn" tooltip="'open formulier'" text="'Open formulier'" visible="false" constraint="align:right middle; padding:5 5 5 5">
+					<onActionPerformed>
+						<block expression="{attribute:/../../tabs/table:selectedIndex} == -1">
+							<showInfo text="'Selecteer a.u.b. een official'" />
+							<breakEvent />
+						</block>
+						<callService service="'official/evalform/InitUpdateOfficialEvalForm'" cached="true" />
+						<!-- Fix, determine from match -->
+						<setValue from="GetPropertyValue({attribute:/../../tabs/table:selectedMessage},'FormId')" to="{propertyref:/official/evalform/InitUpdateOfficialEvalForm:Form/FormId}" />
+						<setValue from="{property:/officialportal/ProcessQueryMatch:Match/MatchId}" to="{propertyref:/official/evalform/InitUpdateOfficialEvalForm:Form/MatchId}" />
+						<setValue from="GetPropertyValue({attribute:/../../tabs/table:selectedMessage},'OfficialId')" to="{propertyref:/official/evalform/InitUpdateOfficialEvalForm:Form/VisitedOfficialId}" />
+						<setValue from="GetPropertyValue({attribute:/../../tabs/table:selectedMessage},'OfficialOfficialOfficialId')" to="{propertyref:/official/evalform/InitUpdateOfficialEvalForm:Form/OfficialId}" />
+						<setValue from="{global:/username}" to="{propertyref:/official/evalform/InitUpdateOfficialEvalForm:Form/AuthorId}" />
+						<callService service="'official/evalform/ProcessQueryOfficialEvalForm'" input="{navajo:/official/evalform/InitUpdateOfficialEvalForm}" />
+						<instantiate id="'form'" location="{component://init/main}" name="'oeMatchFormWindow'" force="true" />
+						<reloadNavajo service="'official/evalform/ProcessQueryOfficialEvalForm'"/>
+						<block expression="{event:/status} == 'NEW'">
+							<setValue to="{attributeref://init/main/form:title}" from="{property:/officialportal/ProcessQueryMatch:MatchData/CompetitionTypeName}+' '+{property:/officialportal/ProcessQueryMatch:MatchData/ClassName}+' '+{property:/officialportal/ProcessQueryMatch:MatchData/PoolName}+' ('+{property:/official/evalform/ProcessQueryOfficialEvalForm:/ObjectForm/StatusDescription}+') (Nieuw formulier)'"/>
+						<breakEvent />
+			
+						</block>
+						<block expression="{event:/status} != 'NEW'">
+							<setValue to="{attributeref://init/main/form:title}" from="{property:/officialportal/ProcessQueryMatch:MatchData/CompetitionTypeName}+' '+{property:/officialportal/ProcessQueryMatch:MatchData/ClassName}+' '+{property:/officialportal/ProcessQueryMatch:MatchData/PoolName}+' ('+{property:/official/evalform/ProcessQueryOfficialEvalForm:/ObjectForm/StatusDescription}+')'"/>
+						</block>
+						<breakEvent />
+						<!-- Beware, effectively disabled the rest -->
+						<block expression="{attribute:/../../oeCurrentMatchesTipi/oeMatchesTable:selectedIndex} != -1">
+							<block
+								expression="({property:/../../oeCurrentMatchesTipi/oeMatchesTable:selectedMessage:FormStatus} == 'FINAL') OR ({property:/../../oeCurrentMatchesTipi/oeMatchesTable:selectedMessage:FormStatus} == 'CLOSED')">
+								<showInfo text="'Een definitief of gesloten formulier kan niet meer gewijzigd worden.'" />
+							</block>
+							<block
+								expression="({property:/../../oeCurrentMatchesTipi/oeMatchesTable:selectedMessage:FormStatus} != 'FINAL') AND ({property:/../../oeCurrentMatchesTipi/oeMatchesTable:selectedMessage:FormStatus} != 'CLOSED')">
+								<setValue from="false" to="{attributeref:/~:visible}" />
+								<setValue from="true" to="{attributeref://init/desktop/oeMatchFormWindow:visible}" />
+								<setValue from="'Scheidsrechter: '+{property:/../../oeCurrentMatchesTipi/oeMatchesTable:selectedMessage:OfficialName}" to="{attributeref://init/desktop/oeMatchFormWindow/topLabel/officialName:text}" />
+								<setValue
+									from="'Wedstrijd: '+{property:/../../oeCurrentMatchesTipi/oeMatchesTable:selectedMessage:HomeTeam} + ' - ' + {property:/../../oeCurrentMatchesTipi/oeMatchesTable:selectedMessage:AwayTeam}"
+									to="{attributeref://init/desktop/oeMatchFormWindow/topLabel/matchName:text}" />
+								<setValue to="{propertyref:/official/evalform/InitUpdateOfficialEvalForm:/Form/ObjectId}" from="{property:/../../oeCurrentMatchesTipi/oeMatchesTable:selectedMessage:MatchId}" />
+								<setValue to="{propertyref:/official/evalform/InitUpdateOfficialEvalForm:/Form/FormId}" from="{property:/../../oeCurrentMatchesTipi/oeMatchesTable:selectedMessage:FormId}" />
+							</block>
+						</block>
+					</onActionPerformed>
+				</c.button>
+				<c.button id="blanco" text="'Open blanco formulier'"  tooltip="'open blanco formulier'" visible="false" constraint="align:right middle; padding:5 5 5 5">
+					<onActionPerformed>
+						<instantiate id="'blanco'" location="{component://init/main}" name="'blancoDownloadWindow'" force="true" />
+					</onActionPerformed>
+				</c.button>
+			</c.toolbar>
+		</l.border>
+	</d.window>
+</tid>

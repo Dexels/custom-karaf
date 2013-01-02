@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<tid xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" errorhandler="error" xsi:noNamespaceSchemaLocation="tipi.xsd">
+    <d.window closable="true" h="525" name="matchDisciplineAddWindow" resizable="true" title="'Tuchtzaak'" movable="true" w="980" x="20" y="60">
+        <onInstantiate>
+            <callService service="'officialportal/InitInsertDisciplineCase'"/>
+        </onInstantiate>
+        <l.border>
+            <c.gridpanel constraint="North:460" columnWidth="'500'" service="officialportal/InitInsertDisciplineCase" >
+                <c.property propertyname="'/DisciplineCase/Player'" showlabel="true" />
+                <c.property propertyname="'/DisciplineCase/Type'" />
+<!--                 <c.property propertyname="'/DisciplineCase/DisciplineCode'"/> -->
+<!--                 <c.property propertyname="'/DisciplineCase/Description'"/> -->
+            </c.gridpanel>
+            <c.toolbar constraint="South:55">            
+                <c.button id="save" text="'Opslaan'">
+                    <onActionPerformed>
+                        <callService service="'officialportal/ProcessInsertDiciplineCase'"/>
+                    </onActionPerformed>
+                </c.button>
+            </c.toolbar>
+        </l.border>
+    </d.window>
+</tid>
