@@ -18,11 +18,11 @@
 
 #debug settings to run out of OpenShift:
 if [ "x$OPENSHIFT_DATA_DIR" = "x" ]; then
-    OPENSHIFT_DATA_DIR=/Users/frank/git/karaf-openshift/data
+    OPENSHIFT_DATA_DIR=/Users/frank/git/custom-karaf/apache-karaf-2.3.0/data
     export OPENSHIFT_DATA_DIR
 fi
 if [ "x$OPENSHIFT_REPO_DIR" = "x" ]; then
-    OPENSHIFT_REPO_DIR=/Users/frank/git/karaf-openshift
+    OPENSHIFT_REPO_DIR=/Users/frank/git/custom-karaf/
     export OPENSHIFT_REPO_DIR
 fi
 if [ "x$OPENSHIFT_INTERNAL_IP" = "x" ]; then
