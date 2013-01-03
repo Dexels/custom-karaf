@@ -1,2 +1,4 @@
 .DS_Store
 apache-karaf-2.3.0/etc/jetty.xml
+apache-karaf-2.3.0/navajo
+apache-karaf-2.3.0/tipi
