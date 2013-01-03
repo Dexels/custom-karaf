@@ -1,3 +1,3 @@
 [submodule "apache-karaf-2.3.0/navajo"]
 	path = apache-karaf-2.3.0/navajo
-	url = git@github.com:Dexels/navajo-example.git
+	url = https://github.com/Dexels/navajo-example.git
