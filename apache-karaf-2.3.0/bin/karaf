@@ -30,14 +30,14 @@ if [ "x$OPENSHIFT_INTERNAL_IP" = "x" ]; then
     export OPENSHIFT_INTERNAL_IP
 fi
 
-echo "Starting Openshift Karaf"
-echo $OPENSHIFT_DATA_DIR
-export KARAF_HOME=${OPENSHIFT_REPO_DIR}/apache-karaf-2.3.0/
-export KARAF_BASE=${OPENSHIFT_REPO_DIR}/apache-karaf-2.3.0/
-mkdir -p ${OPENSHIFT_DATA_DIR}/karaf
-export KARAF_DATA=${OPENSHIFT_DATA_DIR}/karaf
+#echo "Starting Openshift Karaf"
+#echo $OPENSHIFT_DATA_DIR
+#export KARAF_HOME=${OPENSHIFT_REPO_DIR}/apache-karaf-2.3.0/
+#export KARAF_BASE=${OPENSHIFT_REPO_DIR}/apache-karaf-2.3.0/
+#mkdir -p ${OPENSHIFT_DATA_DIR}/karaf
+#export KARAF_DATA=${OPENSHIFT_DATA_DIR}/karaf
 #./karaf server
-echo "End of Openshift Karaf"
+#echo "End of Openshift Karaf"
 
 
 DIRNAME=`dirname "$0"`
